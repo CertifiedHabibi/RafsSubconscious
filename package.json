@@ -1,0 +1,17 @@
+{
+  "name": "le-codes",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "discord.js": "^14.19.3",
+    "djs-commander": "^0.0.50",
+    "dotenv": "^16.5.0"
+  }
+}
