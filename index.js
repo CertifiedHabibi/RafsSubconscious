@@ -15,68 +15,81 @@ const client = new Client({
 const BonusCycle = [
   {
     name: "Double Regeneration",
-    time: 36 * 60 * 60 * 1000,
+    time: 10 * 1000, //time: 36 * 60 * 60 * 1000,
     image: "DoubleRegen3.png",
   },
-  { name: "Triple XP", time: 24 * 60 * 60 * 1000, image: "TripleXP7.png" },
+  { name: "Triple XP", 
+    time: 10 * 1000, //time: 24 * 60 * 60 * 1000, 
+    image: "TripleXP7.png" },
   {
     name: "Campaign Passes x25",
-    time: 12 * 60 * 60 * 1000,
+    time: 10 * 1000, //time: 12 * 60 * 60 * 1000,
     image: "X25Pass.png",
   },
   {
     name: "Quadruple Regeneration",
-    time: 24 * 60 * 60 * 1000,
+    time: 10 * 1000, //time: 24 * 60 * 60 * 1000,
     image: "QuadRegen3.png",
   },
-  { name: "Challenge Token", time: 3 * 60 * 60 * 1000, image: "CT.png" },
+  { name: "Challenge Token", 
+    time: 10 * 1000, //time: 3 * 60 * 60 * 1000, 
+    image: "CT.png" },
   {
     name: "Campaign Passes x5",
-    time: (1 * 24 + 6) * 60 * 60 * 1000,
+    time: 10 * 1000, //time: (1 * 24 + 6) * 60 * 60 * 1000,
     image: "X5Pass.png",
   },
-  { name: "Double XP", time: 10 * 60 * 60 * 1000, image: "DoubleXP3.png" },
+  { name: "Double XP", 
+    time: 10 * 1000, //time: 10 * 60 * 60 * 1000, 
+    image: "DoubleXP3.png" },
   {
     name: "Critical Strikes",
-    time: 15 * 60 * 60 * 1000,
+    time: 10 * 1000, //time: 15 * 60 * 60 * 1000,
     image: "CritStrike3.png",
   },
   {
     name: "Campaign Passes x25",
-    time: (1 * 24 + 12) * 60 * 60 * 1000,
+    time: 10 * 1000, //time: (1 * 24 + 12) * 60 * 60 * 1000,
     image: "X25Pass.png",
   },
-  { name: "Jackpot Token Bonus", time: 19 * 60 * 60 * 1000, image: "JT.png" },
+  { name: "Jackpot Token Bonus", 
+    time: 10 * 1000, //time: 19 * 60 * 60 * 1000, 
+    image: "JT.png" },
   {
     name: "Anti-Critical Shield",
-    time: 12 * 60 * 60 * 1000,
+    time: 10 * 1000, //time: 12 * 60 * 60 * 1000,
     image: "AntiCrit1.png",
   },
-  { name: "Reactor Token Bonus", time: 3 * 60 * 60 * 1000, image: "RT.png" },
-  { name: "Triple XP", time: 18 * 60 * 60 * 1000, image: "TripleXP3.png" },
+  { name: "Reactor Token Bonus", 
+    time: 10 * 1000, //time: 3 * 60 * 60 * 1000, 
+    image: "RT.png" },
+  { 
+    name: "Triple XP", 
+    time: 10 * 1000, //time: 18 * 60 * 60 * 1000, 
+    image: "TripleXP3.png" },
   {
     name: "Double Regeneration",
-    time: (1 * 24 + 18) * 60 * 60 * 1000,
+    time: 10 * 1000, //time: (1 * 24 + 18) * 60 * 60 * 1000,
     image: "DoubleRegen7.png",
   },
   {
     name: "Critical Strikes",
-    time: 15 * 60 * 60 * 1000,
+    time: 10 * 1000, //time: 15 * 60 * 60 * 1000,
     image: "CritStrike7.png",
   },
   {
     name: "Anti-Critical Shield",
-    time: 12 * 60 * 60 * 1000,
+    time: 10 * 1000, //time: 12 * 60 * 60 * 1000,
     image: "AntiCrit3.png",
   },
   {
     name: "Campaign Passes x25",
-    time: 24 * 60 * 60 * 1000,
+    time: 10 * 1000, //time: 24 * 60 * 60 * 1000,
     image: "X25Pass.png",
   },
   {
     name: "Jackpot Token Bonus",
-    time: (1 * 24 + 12) * 60 * 60 * 1000,
+    time: 10 * 1000, //time: (1 * 24 + 12) * 60 * 60 * 1000,
     image: "JT.png",
   },
 ];
@@ -99,7 +112,7 @@ async function startBonusCycle(channel) {
   const endTimestamp = Math.floor((Date.now() + Bonus.time) / 1000); // convert ms to seconds
 
 await channel.send({
-  content: `${rolePing} New crafting bonus is available: **${Bonus.name}**\n Ends in <t:${endTimestamp}:R>`,
+  content: `${rolePing} New crafting bonus is available: **${Bonus.name}**\n End: <t:${endTimestamp}:R>`,
   files: [attachment],
 });
 
