@@ -17,7 +17,7 @@ const client = new Client({
 const BonusCycle = [
   {
     name: "Double Regeneration",
-    displayName: "Double XP",
+    displayName: "Double Regeneration",
     time: 36 * 60 * 60 * 1000,
     image: "DoubleRegen3.png",
   },
