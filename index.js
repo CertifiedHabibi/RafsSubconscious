@@ -137,9 +137,9 @@ client.on("interactionCreate", async interaction => {
 
     const now = new Date();
     const [hours, minutes] = endTimeString.split(":").map(Number);
-    const endDate = new Date(now);
-    endDate.setHours(hours, minutes, 0, 0);
-    if (endDate < now) endDate.setDate(endDate.getDate() + 1);
+    const endDateIST = new Date(now);
+    endDateIST.setUTCHours(hours - 5, minutes - 30, 0, 0); // Convert IST to UTC
+    if (endDateIST < now) endDateIST.setUTCDate(endDateIST.getUTCDate() + 1);
 
     const endTimestamp = Math.floor(endDate.getTime() / 1000);
     let rolePing = "";
