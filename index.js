@@ -141,7 +141,8 @@ client.on("interactionCreate", async interaction => {
     endDateIST.setUTCHours(hours - 5, minutes - 30, 0, 0); // Convert IST to UTC
     if (endDateIST < now) endDateIST.setUTCDate(endDateIST.getUTCDate() + 1);
 
-    const endTimestamp = Math.floor(endDate.getTime() / 1000);
+    const endTimestamp = Math.floor(endDateIST.getTime() / 1000);
+
     let rolePing = "";
     if (selectedBonus === "Jackpot Token Bonus") {
       rolePing = "<@&1392185205678411919>";
@@ -156,7 +157,7 @@ client.on("interactionCreate", async interaction => {
 
     await interaction.reply({ content: "Bonus message sent!", ephemeral: true });
 
-    const delay = endDate.getTime() - Date.now();
+    const delay = endDateIST.getTime() - Date.now();
     if (currentTimeout) clearTimeout(currentTimeout);
     currentTimeout = setTimeout(() => startBonusCycle(interaction.channel), delay);
   }
