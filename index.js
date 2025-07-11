@@ -95,7 +95,7 @@ const BonusCycle = [
   },
   {
     name: "Jackpot Token Bonus",
-    time: 10*1000, // time: (1 * 24 + 12) * 60 * 60 * 1000,
+    time: 10*1000, //time: (1 * 24 + 12) * 60 * 60 * 1000,
     image: "JT.png",
   },
 ];
@@ -107,19 +107,8 @@ async function startBonusCycle(channel) {
   const imagePath = path.join(__dirname, "bonuses", Bonus.image);
   const attachment = new AttachmentBuilder(imagePath);
 
-  let rolePing = null;
-  if (Bonus.name === "Jackpot Token Bonus") {
-    rolePing = "<@&1392185205678411919>";
-  } else if (Bonus.name === "Reactor Token Bonus") {
-    rolePing = "<@&1392185334594277386>";
-  }
-
-  const endTimestamp = Math.floor((Date.now() + Bonus.time) / 1000);
-
-  const messageText = `${rolePing ?? ""} The current bonus available: **${Bonus.name}**\nEnds <t:${endTimestamp}:R>`;
-
   await channel.send({
-    content: messageText.trim(),
+    content: `<@&JT-Bonus> Bonus available: **${Bonus.name}**`,
     files: [attachment],
   });
 
