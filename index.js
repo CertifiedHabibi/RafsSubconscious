@@ -145,9 +145,9 @@ client.on("interactionCreate", async interaction => {
 
     let rolePing = "";
     if (selectedBonus === "Jackpot Token Bonus") {
-      rolePing = "<@&1392185205678411919>";
+      rolePing = "<@&1312192164188655666>";
     } else if (selectedBonus === "Reactor Token Bonus") {
-      rolePing = "<@&1392185334594277386>";
+      rolePing = "<@&1312192811092807690>";
     }
 
     await interaction.channel.send({
@@ -166,7 +166,7 @@ client.on("interactionCreate", async interaction => {
 client.once("ready", async () => {
   console.log(`Logged in as ${client.user.tag}`);
 
-  const channel = await client.channels.fetch("1381837516495126670");
+  const channel = await client.channels.fetch("1393293276123238411");
   startBonusCycle(channel);
 });
 
