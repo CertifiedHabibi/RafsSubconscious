@@ -127,7 +127,7 @@ client.on("interactionCreate", async interaction => {
     const selectedBonus = interaction.options.getString("bonus");
     const endTimeString = interaction.options.getString("end_time");
 
-    const bonus = BonusCycle.find(b => b.name === selectedBonus);
+    const bonus = BonusCycle.find(b => b.image.startsWith(selectedBonus));
     if (!bonus) {
       return interaction.reply({ content: "Invalid bonus!", ephemeral: true });
     }

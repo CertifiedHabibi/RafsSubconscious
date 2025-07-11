@@ -10,26 +10,26 @@ const commands = [
         .setDescription('Select the current bonus')
         .setRequired(true)
         .addChoices(
-          { name: 'DoubleRegen3', value: 'Double Regeneration 3 (36 hours)' },
-          { name: 'TripleXP7', value: 'Triple XP 7 (24 hours)' },
-          { name: 'X25Pass', value: 'Campaign Passes x25 (12 hours)' },
-          { name: 'TripleRegen3', value: 'Triple Regeneration 3 (24 hours)' },
-          { name: 'CT', value: 'Challenge Token (3 hours)' },
-          { name: 'X5Pass', value: 'Campaign Passes x5 (30 hours)' },
-          { name: 'DoubleXP3', value: 'Double XP 3 (10 hours)' },
-          { name: 'CritStrike3', value: 'Critical Strikes 3 (15 hours)' },
-          { name: 'X25Pass2', value: 'Campaign Passes x25 (36 hours)' },
-          { name: 'JT', value: 'Jackpot Token (19 hours)' },
-          { name: 'AntiCrit1', value: 'AntiCritical Shield 1 (12 hours)' },
-          { name: 'RT', value: 'Reactor Token (3 hours)' },
-          { name: 'TripleXP3', value: 'Triple XP 3 (18 hours)' },
-          { name: 'DoubleRegen7', value: 'Double Regeneration 7 (42 hours)' },
-          { name: 'CritStrike7', value: 'Critical Strikes 7 (15 hours)' },
-          { name: 'AntiCrit3', value: 'AntiCritical Shield 3 (12 hours)' },
-          { name: 'X25Pass3', value: 'Campaign Passes x25 (24 hours)' },
-          { name: 'JT2', value: 'Jackpot Token (36 hours)' },
+  { name: 'Double Regeneration (36h)', value: 'DoubleRegen3' },
+  { name: 'Triple XP (24h)', value: 'TripleXP7' },
+  { name: 'Campaign Passes x25 (12h)', value: 'X25Pass' },
+  { name: 'Quadruple Regeneration (24h)', value: 'QuadRegen3' },
+  { name: 'Challenge Token (3h)', value: 'CT' },
+  { name: 'Campaign Passes x5 (30h)', value: 'X5Pass' },
+  { name: 'Double XP (10h)', value: 'DoubleXP3' },
+  { name: 'Critical Strikes (15h)', value: 'CritStrike3' },
+  { name: 'Campaign Passes x25 (36h)', value: 'X25Pass' }, // same image, reused
+  { name: 'Jackpot Token Bonus (19h)', value: 'JT' },
+  { name: 'Anti-Critical Shield (12h)', value: 'AntiCrit1' },
+  { name: 'Reactor Token Bonus (3h)', value: 'RT' },
+  { name: 'Triple XP (18h)', value: 'TripleXP3' },
+  { name: 'Double Regeneration (42h)', value: 'DoubleRegen7' },
+  { name: 'Critical Strikes (15h)', value: 'CritStrike7' },
+  { name: 'Anti-Critical Shield (12h)', value: 'AntiCrit3' },
+  { name: 'Campaign Passes x25 (24h)', value: 'X25Pass' },
+  { name: 'Jackpot Token Bonus (36h)', value: 'JT' }
+)
 
-        )
     )
     .addStringOption(option =>
   option.setName('end_time')
