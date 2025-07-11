@@ -169,7 +169,7 @@ client.on("interactionCreate", async interaction => {
     }
 
     await interaction.channel.send({
-      content: `${rolePing} New crafting bonus is available: **${selectedBonus}**\nEnds <t:${endTimestamp}:R>`,
+      content: `${rolePing} New crafting bonus is available: **${bonus.displayName ?? bonus.name}**\nEnds <t:${endTimestamp}:R>`,
       files: [attachment],
     });
 
