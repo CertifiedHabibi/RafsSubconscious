@@ -23,97 +23,124 @@ function getRolePing(bonusName) {
 const BonusCycle = [
 
   {
+    id: "36DoubleRegen3",
     name: "Double Regeneration",
     displayName: "Double Regeneration",
     time: 36 * 60 * 60 * 1000,
     image: "DoubleRegen3.png",
   },
-  { name: "Triple XP",
+  { 
+    id: "24TripleXP7.png",
+    name: "Triple XP",
     displayName: "Triple XP", 
     time: 24 * 60 * 60 * 1000, 
-    image: "TripleXP7.png" },
+    image: "TripleXP7.png",
+  },
   {
+    id: "12X25Pass.png",
     name: "Campaign Passes x25",
     displayName: "Campaign Passes x25",
     time: 12 * 60 * 60 * 1000,
     image: "X25Pass.png",
   },
   {
+    id: "24QuadRegen3",
     name: "Quadruple Regeneration",
     displayName: "Quadruple Regeneration",
     time: 24 * 60 * 60 * 1000,
     image: "QuadRegen3.png",
   },
-  { name: "Challenge Token", 
+  { id: "CT",
+    name: "Challenge Token", 
     displayName: "Challenge Token",
     time: 3 * 60 * 60 * 1000, 
-    image: "CT.png" },
+    image: "CT.png",
+   },
   {
+    id: "X5Pass",
     name: "Campaign Passes x5",
     displayName: "Campaign Passes x5",
     time: (1 * 24 + 6) * 60 * 60 * 1000,
     image: "X5Pass.png",
   },
-  { name: "Double XP", 
+  { id: "10DoubleXP3",
+    name: "Double XP", 
     displayName: "Double XP",
     time: 10 * 60 * 60 * 1000, 
-    image: "DoubleXP3.png" },
+    image: "DoubleXP3.png",
+   },
   {
+    id: "15CritStrike3",
     name: "Critical Strikes",
     displayName: "Critical Strikes",
     time: 15 * 60 * 60 * 1000,
     image: "CritStrike3.png",
   },
   {
+    id: "36X25Pass",
     name: "Campaign Passes x25",
     displayName: "Campaign Passes x25",
     time: (1 * 24 + 12) * 60 * 60 * 1000,
     image: "X25Pass.png",
   },
-  { name: "Jackpot Token Bonus", 
+  { 
+    id: "19JT",
+    name: "Jackpot Token Bonus", 
     displayName: "Jackpot Token",
     time: 19 * 60 * 60 * 1000, 
-    image: "JT.png" },
+    image: "JT.png",
+   },
   {
+    id: "12AntiCrit1",
     name: "Anti-Critical Shield",
     displayName: "Anti-Critical Shield",
     time: 12 * 60 * 60 * 1000,
     image: "AntiCrit1.png",
   },
-  { name: "Reactor Token Bonus", 
+  { 
+    id: "RT",
+    name: "Reactor Token Bonus", 
     displayName: "Reactor Token",
     time: 3 * 60 * 60 * 1000, 
-    image: "RT.png" },
+    image: "RT.png",
+   },
   { 
+    id: "18TripleXP3",
     name: "Triple XP", 
     displayName: "Triple XP",
     time: 18 * 60 * 60 * 1000, 
-    image: "TripleXP3.png" },
+    image: "TripleXP3.png",
+   },
   {
+    id: "42DoubleRegen7",
     name: "Double Regeneration",
     displayName: "Double Regeneration",
     time: (1 * 24 + 18) * 60 * 60 * 1000,
     image: "DoubleRegen7.png",
   },
   {
+    id: "15CritStrike7",
     name: "Critical Strikes",
     displayName: "Critical Strikes",
     time: 15 * 60 * 60 * 1000,
     image: "CritStrike7.png",
   },
   {
+    id: "12AntiCrit3",
     name: "Anti-Critical Shield",
     displayName: "Anti-Critical Shield",
     time: 12 * 60 * 60 * 1000,
     image: "AntiCrit3.png",
   },
   {
+    id: "24X25Pass",
     name: "Campaign Passes x25",
     displayName: "Campaign Passes x25",
     time: 24 * 60 * 60 * 1000,
     image: "X25Pass.png",
   },
   {
+    id: "36JT",
     name: "Jackpot Token Bonus",
     displayName: "Jackpot Token",
     time: (1 * 24 + 12) * 60 * 60 * 1000,
@@ -148,7 +175,8 @@ client.on("interactionCreate", async interaction => {
     const selectedBonus = interaction.options.getString("bonus");
     const endTimeString = interaction.options.getString("end_time");
 
-    const bonus = BonusCycle.find(b => b.image.startsWith(selectedBonus));
+    const bonus = BonusCycle.find(b => b.id === selectedBonus);
+
     if (!bonus) {
       return interaction.reply({ content: "Invalid bonus!", ephemeral: true });
     }
@@ -173,7 +201,7 @@ client.on("interactionCreate", async interaction => {
 
     await interaction.reply({ content: "Bonus message sent!", ephemeral: true });
 
-    const selectedIndex = BonusCycle.findIndex(b => b.image.startsWith(selectedBonus));
+    const selectedIndex = BonusCycle.findIndex(b => b.id === selectedBonus);
     currentIndex = (selectedIndex + 1) % BonusCycle.length;
 
     const delay = endDateIST.getTime() - Date.now();
