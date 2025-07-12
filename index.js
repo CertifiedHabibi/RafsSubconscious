@@ -14,7 +14,14 @@ const client = new Client({
   intents: [IntentsBitField.Flags.Guilds, IntentsBitField.Flags.GuildMessages],
 });
 
+function getRolePing(bonusName) {
+  if (bonusName === "Jackpot Token Bonus") return "<@&1312192164188655666>";
+  if (bonusName === "Reactor Token Bonus") return "<@&1312192811092807690>";
+  return "";
+}
+
 const BonusCycle = [
+
   {
     name: "Double Regeneration",
     displayName: "Double Regeneration",
@@ -122,21 +129,17 @@ async function startBonusCycle(channel) {
   const imagePath = path.join(__dirname, "bonuses", Bonus.image);
   const attachment = new AttachmentBuilder(imagePath);
 
-  let rolePing = "";
-  if (Bonus.name === "Jackpot Token Bonus") {
-    rolePing = "<@&1392185205678411919>";
-  } else if (Bonus.name === "Reactor Token Bonus") {
-    rolePing = "<@&1392185334594277386>";
-  }
+  const rolePing = getRolePing(Bonus.name);
 
   const endTimestamp = Math.floor((Date.now() + Bonus.time) / 1000);
+
   await channel.send({
     content: `${rolePing} New crafting bonus is available: **${Bonus.displayName ?? Bonus.name}**\nEnd: <t:${endTimestamp}:R>`,
     files: [attachment],
   });
 
   currentIndex = (currentIndex + 1) % BonusCycle.length;
-  setTimeout(() => startBonusCycle(channel), Bonus.time);
+  currentTimeout = setTimeout(() => startBonusCycle(channel), Bonus.time);
 }
 
 client.on("interactionCreate", async interaction => {
@@ -161,12 +164,7 @@ client.on("interactionCreate", async interaction => {
 
     const endTimestamp = Math.floor(endDateIST.getTime() / 1000);
 
-    let rolePing = "";
-    if (selectedBonus === "Jackpot Token Bonus") {
-      rolePing = "<@&1312192164188655666>";
-    } else if (selectedBonus === "Reactor Token Bonus") {
-      rolePing = "<@&1312192811092807690>";
-    }
+    const rolePing = getRolePing(bonus.name);
 
     await interaction.channel.send({
       content: `${rolePing} New crafting bonus is available: **${bonus.displayName ?? bonus.name}**\nEnds <t:${endTimestamp}:R>`,
@@ -182,6 +180,21 @@ client.on("interactionCreate", async interaction => {
     if (currentTimeout) clearTimeout(currentTimeout);
     currentTimeout = setTimeout(() => startBonusCycle(interaction.channel), delay);
   }
+
+  else if (interaction.commandName === "nextbonus") {
+  currentIndex = (currentIndex + 1) % BonusCycle.length;
+  if (currentTimeout) clearTimeout(currentTimeout);
+  await startBonusCycle(interaction.channel);
+  await interaction.reply({ content: "Next bonus triggered and cycle resumed.", ephemeral: true });
+}
+
+else if (interaction.commandName === "prevbonus") {
+  currentIndex = (currentIndex - 1 + BonusCycle.length) % BonusCycle.length;
+  if (currentTimeout) clearTimeout(currentTimeout);
+  await startBonusCycle(interaction.channel);
+  await interaction.reply({ content: "Previous bonus triggered and cycle resumed.", ephemeral: true });
+}
+
 });
 
 client.once("ready", async () => {

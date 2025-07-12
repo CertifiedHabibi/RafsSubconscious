@@ -35,7 +35,15 @@ const commands = [
   option.setName('end_time')
     .setDescription('Enter end time in HH:mm format (IST)')
     .setRequired(true)
-)
+),
+
+new SlashCommandBuilder()
+    .setName("nextbonus")
+    .setDescription("Manually trigger the next bonus in the cycle"),
+
+  new SlashCommandBuilder()
+    .setName("prevbonus")
+    .setDescription("Manually trigger the previous bonus in the cycle")
 
 ].map(cmd => cmd.toJSON());
 
