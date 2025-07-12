@@ -202,7 +202,8 @@ client.on("interactionCreate", async interaction => {
     await interaction.reply({ content: "Bonus message sent!", ephemeral: true });
 
     const selectedIndex = BonusCycle.findIndex(b => b.id === selectedBonus);
-    currentIndex = (selectedIndex + 1) % BonusCycle.length;
+    currentIndex = selectedIndex;
+
 
     const delay = endDateIST.getTime() - Date.now();
     if (currentTimeout) clearTimeout(currentTimeout);
