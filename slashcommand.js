@@ -10,24 +10,24 @@ const commands = [
         .setDescription('Select the current bonus')
         .setRequired(true)
         .addChoices(
-  { name: 'Double Regeneration (36h)', value: 'DoubleRegen3' },
-  { name: 'Triple XP (24h)', value: 'TripleXP7' },
-  { name: 'Campaign Passes x25 (12h)', value: 'X25Pass' },
-  { name: 'Quadruple Regeneration (24h)', value: 'QuadRegen3' },
+  { name: 'Double Regeneration (36h)', value: '36DoubleRegen3' },
+  { name: 'Triple XP (24h)', value: '24TripleXP7' },
+  { name: 'Campaign Passes x25 (12h)', value: '12X25Pass' },
+  { name: 'Quadruple Regeneration (24h)', value: '24QuadRegen3' },
   { name: 'Challenge Token (3h)', value: 'CT' },
   { name: 'Campaign Passes x5 (30h)', value: 'X5Pass' },
-  { name: 'Double XP (10h)', value: 'DoubleXP3' },
-  { name: 'Critical Strikes (15h)', value: 'CritStrike3' },
-  { name: 'Campaign Passes x25 (36h)', value: 'X25Pass' }, // same image, reused
-  { name: 'Jackpot Token Bonus (19h)', value: 'JT' },
-  { name: 'Anti-Critical Shield (12h)', value: 'AntiCrit1' },
+  { name: 'Double XP (10h)', value: '10DoubleXP3' },
+  { name: 'Critical Strikes (15h)', value: '15CritStrike3' },
+  { name: 'Campaign Passes x25 (36h)', value: '36X25Pass' },
+  { name: 'Jackpot Token Bonus (19h)', value: '19JT' },
+  { name: 'Anti-Critical Shield (12h)', value: '12AntiCrit1' },
   { name: 'Reactor Token Bonus (3h)', value: 'RT' },
-  { name: 'Triple XP (18h)', value: 'TripleXP3' },
-  { name: 'Double Regeneration (42h)', value: 'DoubleRegen7' },
-  { name: 'Critical Strikes (15h)', value: 'CritStrike7' },
-  { name: 'Anti-Critical Shield (12h)', value: 'AntiCrit3' },
-  { name: 'Campaign Passes x25 (24h)', value: 'X25Pass' },
-  { name: 'Jackpot Token Bonus (36h)', value: 'JT' }
+  { name: 'Triple XP (18h)', value: '18TripleXP3' },
+  { name: 'Double Regeneration (42h)', value: '42DoubleRegen7' },
+  { name: 'Critical Strikes (15h)', value: '15CritStrike7' },
+  { name: 'Anti-Critical Shield (12h)', value: '12AntiCrit3' },
+  { name: 'Campaign Passes x25 (24h)', value: '24X25Pass' },
+  { name: 'Jackpot Token Bonus (36h)', value: '36JT' }
 )
 
     )

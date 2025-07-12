@@ -30,14 +30,14 @@ const BonusCycle = [
     image: "DoubleRegen3.png",
   },
   { 
-    id: "24TripleXP7.png",
+    id: "24TripleXP7",
     name: "Triple XP",
     displayName: "Triple XP", 
     time: 24 * 60 * 60 * 1000, 
     image: "TripleXP7.png",
   },
   {
-    id: "12X25Pass.png",
+    id: "12X25Pass",
     name: "Campaign Passes x25",
     displayName: "Campaign Passes x25",
     time: 12 * 60 * 60 * 1000,
