@@ -1,14 +1,23 @@
 {
-  "name": "le-codes",
+  "name": "rafs-subconscious",
   "version": "1.0.0",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "keywords": ["discord","bot","discord-bot","MGG (Mutants: Genetic Gladiators)", "Bonus-Cycling", "Role-Ping", "Automated Bot"],
+  "author": "CertifiedHabibi (https://github.com/CertifiedHabibi)",
+  "license": "SEE LICENSE",
+  "description": "A discord bot for the MGG discord server that pings the crafting bonus roles when required and cycles between them after irregular intervals.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/CertifiedHabibi/RafsSubconscious.git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
+  "bugs": {
+    "url": "https://github.com/CertifiedHabibi/RafsSubconscious/issues"
+  },
+  "homepage": "https://github.com/CertifiedHabibi/RafsSubconscious",
+  "scripts": {
+    "start": "node index.js",
+    "deploy": "node slashcommand.js"
+  },
   "dependencies": {
     "discord.js": "^14.19.3",
     "djs-commander": "^0.0.50",
