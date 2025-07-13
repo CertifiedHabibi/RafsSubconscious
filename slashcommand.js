@@ -62,6 +62,12 @@ const GUILD_ID = '997145720643665931';
   try {
 
     await rest.put(
+      Routes.applicationCommands(CLIENT_ID),
+      { body: [] }
+    );
+    console.log('Cleared GLOBAL slash commands');
+
+    await rest.put(
       Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID),
       { body: [] }
     );
