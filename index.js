@@ -228,9 +228,6 @@ else if (interaction.commandName === "prevbonus") {
 
 client.once("ready", async () => {
   console.log(`Logged in as ${client.user.tag}`);
-
-  const channel = await client.channels.fetch("1393293276123238411");
-  startBonusCycle(channel);
 });
 
 client.login(process.env.DISCORD_CLIENT_TOKEN)
