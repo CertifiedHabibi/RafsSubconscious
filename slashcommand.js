@@ -55,19 +55,24 @@ new SlashCommandBuilder()
 
 const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_CLIENT_TOKEN);
 
+const CLIENT_ID = '1381837160394784838';
+const GUILD_ID = '997145720643665931';
+
 (async () => {
   try {
-    await rest.put(
-  Routes.applicationGuildCommands('1381837160394784838', '997145720643665931'),
-  { body: [] }
-  );
 
-  await rest.put(
-  Routes.applicationGuildCommands('1381837160394784838', '997145720643665931'),
-  { body: commands }
-  );
-    console.log('Slash command registered!');
+    await rest.put(
+      Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID),
+      { body: [] }
+    );
+    console.log('Cleared existing guild slash commands');
+
+    await rest.put(
+      Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID),
+      { body: commands }
+    );
+    console.log('Re-registered updated guild slash commands');
   } catch (err) {
-    console.error(err);
+    console.error('Failed to register commands:', err);
   }
 })();
