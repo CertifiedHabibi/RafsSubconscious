@@ -151,13 +151,12 @@ const BonusCycle = [
 let currentIndex = 0;
 let currentTimeout = null;
 
-async function startBonusCycle(channel) {
+async function startBonusCycle(channel, manual = false) {
   const Bonus = BonusCycle[currentIndex];
   const imagePath = path.join(__dirname, "bonuses", Bonus.image);
   const attachment = new AttachmentBuilder(imagePath);
 
   const rolePing = getRolePing(Bonus.name);
-
   const endTimestamp = Math.floor((Date.now() + Bonus.time) / 1000);
 
   await channel.send({
@@ -165,8 +164,10 @@ async function startBonusCycle(channel) {
     files: [attachment],
   });
 
-  currentIndex = (currentIndex + 1) % BonusCycle.length;
-  currentTimeout = setTimeout(() => startBonusCycle(channel), Bonus.time);
+  if (!manual) {
+    currentIndex = (currentIndex + 1) % BonusCycle.length;
+    currentTimeout = setTimeout(() => startBonusCycle(channel), Bonus.time);
+  }
 }
 
 client.on("interactionCreate", async interaction => {
@@ -210,17 +211,17 @@ client.on("interactionCreate", async interaction => {
     currentTimeout = setTimeout(() => startBonusCycle(interaction.channel), delay);
   }
 
-  else if (interaction.commandName === "nextbonus") {
+else if (interaction.commandName === "nextbonus") {
   currentIndex = (currentIndex + 1) % BonusCycle.length;
   if (currentTimeout) clearTimeout(currentTimeout);
-  await startBonusCycle(interaction.channel);
+  await startBonusCycle(interaction.channel, true); 
   await interaction.reply({ content: "Next bonus triggered and cycle resumed.", ephemeral: true });
 }
 
 else if (interaction.commandName === "prevbonus") {
   currentIndex = (currentIndex - 1 + BonusCycle.length) % BonusCycle.length;
   if (currentTimeout) clearTimeout(currentTimeout);
-  await startBonusCycle(interaction.channel);
+  await startBonusCycle(interaction.channel, true); 
   await interaction.reply({ content: "Previous bonus triggered and cycle resumed.", ephemeral: true });
 }
 
