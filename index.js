@@ -176,6 +176,16 @@ client.on("interactionCreate", async interaction => {
   if (!interaction.isChatInputCommand()) return;
   if (interaction.commandName === "startbonus") {
     const selectedBonus = interaction.options.getString("bonus");
+
+    const bonus = BonusCycle.find(b => b.id === selectedBonus);
+  
+   if (!bonus) {
+  return interaction.reply({ content: "Invalid bonus!", ephemeral: true });
+}
+
+const imagePath = path.join(__dirname, "bonuses", bonus.image);
+const attachment = new AttachmentBuilder(imagePath);
+
     const endTimeString = interaction.options.getString("end_time");
   const endDateString = interaction.options.getString("end_date");
 
