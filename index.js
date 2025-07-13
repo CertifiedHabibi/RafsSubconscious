@@ -164,9 +164,12 @@ async function startBonusCycle(channel, manual = false) {
   });
 
   if (!manual) {
-  currentIndex = (currentIndex + 1) % BonusCycle.length;
-  currentTimeout = setTimeout(() => startBonusCycle(channel), Bonus.time);
+  currentTimeout = setTimeout(() => {
+    currentIndex = (currentIndex + 1) % BonusCycle.length;
+    startBonusCycle(channel);
+  }, Bonus.time);
 }
+
 }
 
 client.on("interactionCreate", async interaction => {
@@ -212,15 +215,21 @@ client.on("interactionCreate", async interaction => {
 
 else if (interaction.commandName === "nextbonus") {
   if (currentTimeout) clearTimeout(currentTimeout);
-  currentIndex = (currentIndex + 1) % BonusCycle.length; // shift first
-  await startBonusCycle(interaction.channel, true);      // show it
+
+  await startBonusCycle(interaction.channel, true);
+
+  currentIndex = (currentIndex + 1) % BonusCycle.length;
+
   await interaction.reply({ content: "Next bonus triggered and cycle resumed.", ephemeral: true });
 }
 
 else if (interaction.commandName === "prevbonus") {
   if (currentTimeout) clearTimeout(currentTimeout);
-  currentIndex = (currentIndex - 1 + BonusCycle.length) % BonusCycle.length; // shift first
-  await startBonusCycle(interaction.channel, true);                          // show it
+
+  currentIndex = (currentIndex - 1 + BonusCycle.length) % BonusCycle.length;
+
+  await startBonusCycle(interaction.channel, true);
+
   await interaction.reply({ content: "Previous bonus triggered and cycle resumed.", ephemeral: true });
 }
 
