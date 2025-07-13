@@ -164,9 +164,9 @@ async function startBonusCycle(channel, manual = false) {
   });
 
   if (!manual) {
-    currentIndex = (currentIndex + 1) % BonusCycle.length;
-    currentTimeout = setTimeout(() => startBonusCycle(channel), Bonus.time);
-  }
+  currentIndex = (currentIndex + 1) % BonusCycle.length;
+  currentTimeout = setTimeout(() => startBonusCycle(channel), Bonus.time);
+}
 }
 
 client.on("interactionCreate", async interaction => {
@@ -202,12 +202,12 @@ client.on("interactionCreate", async interaction => {
     await interaction.reply({ content: "Bonus message sent!", ephemeral: true });
 
     const selectedIndex = BonusCycle.findIndex(b => b.id === selectedBonus);
-    currentIndex = selectedIndex;
-
-
+    currentIndex = (selectedIndex + 1) % BonusCycle.length;
+    
     const delay = endDateIST.getTime() - Date.now();
     if (currentTimeout) clearTimeout(currentTimeout);
     currentTimeout = setTimeout(() => startBonusCycle(interaction.channel), delay);
+
   }
 
 else if (interaction.commandName === "nextbonus") {
