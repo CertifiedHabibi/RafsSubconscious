@@ -212,15 +212,15 @@ client.on("interactionCreate", async interaction => {
   }
 
 else if (interaction.commandName === "nextbonus") {
-  currentIndex = (currentIndex + 1) % BonusCycle.length;
   if (currentTimeout) clearTimeout(currentTimeout);
   await startBonusCycle(interaction.channel, true); 
+  currentIndex = (currentIndex + 1) % BonusCycle.length; 
   await interaction.reply({ content: "Next bonus triggered and cycle resumed.", ephemeral: true });
 }
 
 else if (interaction.commandName === "prevbonus") {
-  currentIndex = (currentIndex - 1 + BonusCycle.length) % BonusCycle.length;
   if (currentTimeout) clearTimeout(currentTimeout);
+  currentIndex = (currentIndex - 1 + BonusCycle.length) % BonusCycle.length;
   await startBonusCycle(interaction.channel, true); 
   await interaction.reply({ content: "Previous bonus triggered and cycle resumed.", ephemeral: true });
 }
