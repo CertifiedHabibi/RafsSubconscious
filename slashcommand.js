@@ -58,9 +58,14 @@ const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_CLIENT_TOK
 (async () => {
   try {
     await rest.put(
-      Routes.applicationGuildCommands('1381837160394784838', '997145720643665931'),
-      { body: commands }
-    );
+  Routes.applicationGuildCommands('1381837160394784838', '997145720643665931'),
+  { body: [] }
+  );
+
+  await rest.put(
+  Routes.applicationGuildCommands('1381837160394784838', '997145720643665931'),
+  { body: commands }
+  );
     console.log('Slash command registered!');
   } catch (err) {
     console.error(err);
