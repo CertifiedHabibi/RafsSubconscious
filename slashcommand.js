@@ -35,6 +35,12 @@ const commands = [
   option.setName('end_time')
     .setDescription('Enter end time in HH:mm format (IST)')
     .setRequired(true)
+)
+
+    .addStringOption(option =>
+  option.setName('end_date')
+    .setDescription('Enter end date in DD-MM-YYYY format (optional)')
+    .setRequired(false)
 ),
 
 new SlashCommandBuilder()
