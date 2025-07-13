@@ -177,21 +177,25 @@ client.on("interactionCreate", async interaction => {
   if (interaction.commandName === "startbonus") {
     const selectedBonus = interaction.options.getString("bonus");
     const endTimeString = interaction.options.getString("end_time");
+  const endDateString = interaction.options.getString("end_date");
 
-    const bonus = BonusCycle.find(b => b.id === selectedBonus);
+  const now = new Date();
+  let endDateIST;
 
-    if (!bonus) {
-      return interaction.reply({ content: "Invalid bonus!", ephemeral: true });
-    }
+  if (endDateString) {
+  
+    const [day, month, year] = endDateString.split("-").map(Number);
+    endDateIST = new Date(Date.UTC(year, month - 1, day));
+} else {
+    endDateIST = new Date(now);
+}
 
-    const imagePath = path.join(__dirname, "bonuses", bonus.image);
-    const attachment = new AttachmentBuilder(imagePath);
+  const [hours, minutes] = endTimeString.split(":").map(Number);
+  endDateIST.setUTCHours(hours - 5, minutes - 30, 0, 0);
 
-    const now = new Date();
-    const [hours, minutes] = endTimeString.split(":").map(Number);
-    const endDateIST = new Date(now);
-    endDateIST.setUTCHours(hours - 5, minutes - 30, 0, 0); // Convert IST to UTC
-    if (endDateIST < now) endDateIST.setUTCDate(endDateIST.getUTCDate() + 1);
+if (!endDateString && endDateIST < now) {
+  endDateIST.setUTCDate(endDateIST.getUTCDate() + 1);
+}
 
     const endTimestamp = Math.floor(endDateIST.getTime() / 1000);
 
