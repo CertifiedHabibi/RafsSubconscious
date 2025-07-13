@@ -211,12 +211,14 @@ if (!endDateString && endDateIST < now) {
 
     const rolePing = getRolePing(bonus.name);
 
+    await interaction.deferReply({ ephemeral: true });
+
     await interaction.channel.send({
       content: `${rolePing} New crafting bonus is available: **${bonus.displayName ?? bonus.name}**\nEnds <t:${endTimestamp}:R>`,
       files: [attachment],
     });
 
-    await interaction.reply({ content: "Bonus message sent!", ephemeral: true });
+    await interaction.editReply({ content: "Bonus message sent!" });
 
     const selectedIndex = BonusCycle.findIndex(b => b.id === selectedBonus);
     currentIndex = (selectedIndex + 1) % BonusCycle.length;
