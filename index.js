@@ -216,12 +216,13 @@ client.on("interactionCreate", async interaction => {
 else if (interaction.commandName === "nextbonus") {
   if (currentTimeout) clearTimeout(currentTimeout);
 
-  await startBonusCycle(interaction.channel, true);
-
   currentIndex = (currentIndex + 1) % BonusCycle.length;
+  
+  await startBonusCycle(interaction.channel, true);
 
   await interaction.reply({ content: "Next bonus triggered and cycle resumed.", ephemeral: true });
 }
+
 
 else if (interaction.commandName === "prevbonus") {
   if (currentTimeout) clearTimeout(currentTimeout);
