@@ -148,6 +148,19 @@ const BonusCycle = [
   },
 ];
 
+function findNextBonus(bonusName, startIndex) {
+  let totalTime = 0;
+  let index = startIndex;
+  for (let i = 1; i <= BonusCycle.length; i++) {
+    index = (startIndex + i) % BonusCycle.length;
+    totalTime += BonusCycle[(startIndex + i - 1 + BonusCycle.length) % BonusCycle.length].time;
+    if (BonusCycle[index].name === bonusName) {
+      return { timeMs: totalTime, index };
+    }
+  }
+  return null;
+}
+
 let currentIndex = 0;
 let currentTimeout = null;
 
@@ -158,9 +171,22 @@ async function startBonusCycle(channel, manual = false) {
   const rolePing = getRolePing(Bonus.name);
   const endTimestamp = Math.floor((Date.now() + Bonus.time) / 1000);
 
+const nextJT = findNextBonus("Jackpot Token Bonus", currentIndex);
+const nextRT = findNextBonus("Reactor Token Bonus", currentIndex);
+
+let extraInfo = "";
+if (nextJT) {
+  const jtSeconds = Math.floor(nextJT.timeMs / 1000);
+  extraInfo += `\nNext JT Bonus: <t:${Math.floor((Date.now() + nextJT.timeMs) / 1000)}:R>`;
+}
+if (nextRT) {
+  const rtSeconds = Math.floor(nextRT.timeMs / 1000);
+  extraInfo += `\nNext RT Bonus: <t:${Math.floor((Date.now() + nextRT.timeMs) / 1000)}:R>`;
+}
+
   await channel.send({
-    content: `${rolePing} New crafting bonus is available: **${Bonus.displayName ?? Bonus.name}**\nEnd: <t:${endTimestamp}:R>`,
-    files: [attachment],
+  content: `${rolePing} New crafting bonus is available: **${Bonus.displayName ?? Bonus.name}**\nEnds: <t:${endTimestamp}:R>${extraInfo}`,
+  files: [attachment],
   });
 
   if (!manual) {
@@ -214,7 +240,8 @@ if (!endDateString && endDateIST < now) {
     await interaction.deferReply({ ephemeral: true });
 
     await interaction.channel.send({
-      content: `${rolePing} New crafting bonus is available: **${bonus.displayName ?? bonus.name}**\nEnds <t:${endTimestamp}:R>`,
+      content: `${rolePing} New crafting bonus is available: **${bonus.displayName ?? bonus.name}**\nEnds <t:${endTimestamp}:R>
+      \nNext JT Bonus `,
       files: [attachment],
     });
 
