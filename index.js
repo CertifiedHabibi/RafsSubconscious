@@ -183,18 +183,16 @@ async function startBonusCycle(channel, manual = false) {
   const nextJT = findNextBonus("Jackpot Token Bonus", currentIndex);
   const nextRT = findNextBonus("Reactor Token Bonus", currentIndex);
 
+  const currentBonusEnd = Date.now() + Bonus.time;
+
   let extraInfo = "";
   if (nextJT) {
-    const jtSeconds = Math.floor(nextJT.timeMs / 1000);
-    extraInfo += `\nNext JT Bonus: <t:${Math.floor(
-      (Date.now() + nextJT.timeMs) / 1000
-    )}:R>`;
+    const jtTime = currentBonusEnd + nextJT.timeMs;
+    extraInfo += `\nNext JT Bonus: <t:${Math.floor(jtTime / 1000)}:R>`;
   }
   if (nextRT) {
-    const rtSeconds = Math.floor(nextRT.timeMs / 1000);
-    extraInfo += `\nNext RT Bonus: <t:${Math.floor(
-      (Date.now() + nextRT.timeMs) / 1000
-    )}:R>`;
+    const rtTime = currentBonusEnd + nextRT.timeMs;
+    extraInfo += `\nNext RT Bonus: <t:${Math.floor(rtTime / 1000)}:R>`;
   }
 
   await channel.send({
