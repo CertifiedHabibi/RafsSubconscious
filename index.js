@@ -212,7 +212,7 @@ client.on("interactionCreate", async interaction => {
 const imagePath = path.join(__dirname, "bonuses", bonus.image);
 const attachment = new AttachmentBuilder(imagePath);
 
-    const endTimeString = interaction.options.getString("end_time");
+  const endTimeString = interaction.options.getString("end_time");
   const endDateString = interaction.options.getString("end_date");
 
   const now = new Date();
@@ -239,13 +239,24 @@ if (!endDateString && endDateIST < now) {
 
     await interaction.deferReply({ ephemeral: true });
 
+    const nextJT = findNextBonus("Jackpot Token Bonus", currentIndex);
+    const nextRT = findNextBonus("Reactor Token Bonus", currentIndex);
+
+    let extraInfo = "";
+    if (nextJT) {
+      extraInfo += `\nNext JT Bonus: <t:${Math.floor((Date.now() + nextJT.timeMs) / 1000)}:R>`;
+    }
+    if (nextRT) {
+      extraInfo += `\nNext RT Bonus: <t:${Math.floor((Date.now() + nextRT.timeMs) / 1000)}:R>`;
+    }
+
     await interaction.channel.send({
-      content: `${rolePing} New crafting bonus is available: **${bonus.displayName ?? bonus.name}**\nEnds <t:${endTimestamp}:R>
-      \nNext JT Bonus `,
-      files: [attachment],
+    content: `${rolePing} New crafting bonus is available: **${bonus.displayName ?? bonus.name}**\nEnds <t:${endTimestamp}:R>${extraInfo}`,
+    files: [attachment],
     });
 
     await interaction.editReply({ content: "Bonus message sent!" });
+
 
     const selectedIndex = BonusCycle.findIndex(b => b.id === selectedBonus);
     currentIndex = (selectedIndex + 1) % BonusCycle.length;
