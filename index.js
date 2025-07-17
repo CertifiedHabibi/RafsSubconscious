@@ -197,11 +197,11 @@ async function startBonusCycle(channel, manual = false) {
 
   let extraInfo = "";
   if (nextJT) {
-    const jtTime = Date.now() + (nextJT.timeMs - bonus.time) + remaining;
+    const jtTime = Date.now() + (nextJT.timeMs - Bonus.time) + remaining;
     extraInfo += `\nNext JT Bonus: <t:${Math.floor(jtTime / 1000)}:R>`;
   }
   if (nextRT) {
-    const rtTime = Date.now() + (nextRT.timeMs - bonus.time) + remaining;
+    const rtTime = Date.now() + (nextRT.timeMs - Bonus.time) + remaining;
     extraInfo += `\nNext RT Bonus: <t:${Math.floor(rtTime / 1000)}:R>`;
   }
 
