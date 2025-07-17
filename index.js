@@ -180,25 +180,35 @@ async function startBonusCycle(channel, manual = false) {
   const imagePath = path.join(__dirname, "bonuses", Bonus.image);
   const attachment = new AttachmentBuilder(imagePath);
   const rolePing = getRolePing(Bonus.name);
-  const endTimestamp = Math.floor((Date.now() + (currentRemaining ?? Bonus.time)) / 1000);
+  const endTimestamp = Math.floor(
+    (Date.now() + (currentRemaining ?? Bonus.time)) / 1000
+  );
 
-  const nextJT = findNextBonus("Jackpot Token Bonus", currentSelectedIndex ?? currentIndex);
-  const nextRT = findNextBonus("Reactor Token Bonus", currentSelectedIndex ?? currentIndex);
+  const nextJT = findNextBonus(
+    "Jackpot Token Bonus",
+    currentSelectedIndex ?? currentIndex
+  );
+  const nextRT = findNextBonus(
+    "Reactor Token Bonus",
+    currentSelectedIndex ?? currentIndex
+  );
 
   const remaining = currentRemaining ?? Bonus.time;
 
   let extraInfo = "";
   if (nextJT) {
-    const jtTime = Date.now() + remaining + nextJT.timeMs;
+    const jtTime = Date.now() + (nextJT.timeMs - bonus.time) + remaining;
     extraInfo += `\nNext JT Bonus: <t:${Math.floor(jtTime / 1000)}:R>`;
   }
   if (nextRT) {
-    const rtTime = Date.now() + remaining + nextRT.timeMs;
+    const rtTime = Date.now() + (nextRT.timeMs - bonus.time) + remaining;
     extraInfo += `\nNext RT Bonus: <t:${Math.floor(rtTime / 1000)}:R>`;
   }
 
   await channel.send({
-    content: `${rolePing} New crafting bonus is available: **${Bonus.displayName ?? Bonus.name}**\nEnds: <t:${endTimestamp}:R>${extraInfo}`,
+    content: `${rolePing} New crafting bonus is available: **${
+      Bonus.displayName ?? Bonus.name
+    }**\nEnds: <t:${endTimestamp}:R>${extraInfo}`,
     files: [attachment],
   });
 
@@ -252,7 +262,7 @@ client.on("interactionCreate", async (interaction) => {
 
     await interaction.deferReply({ ephemeral: true });
 
-    const selectedIndex = BonusCycle.findIndex(b => b.id === selectedBonus);
+    const selectedIndex = BonusCycle.findIndex((b) => b.id === selectedBonus);
 
     const nextJT = findNextBonus("Jackpot Token Bonus", selectedIndex);
     const nextRT = findNextBonus("Reactor Token Bonus", selectedIndex);
@@ -264,14 +274,13 @@ client.on("interactionCreate", async (interaction) => {
 
     let extraInfo = "";
     if (nextJT) {
-      const jtTime = Date.now() + remaining + nextJT.timeMs;
+      const jtTime = Date.now() + (nextJT.timeMs - bonus.time) + remaining;
       extraInfo += `\nNext JT Bonus: <t:${Math.floor(jtTime / 1000)}:R>`;
     }
     if (nextRT) {
-      const rtTime = Date.now() + remaining + nextRT.timeMs;
+      const rtTime = Date.now() + (nextRT.timeMs - bonus.time) + remaining;
       extraInfo += `\nNext RT Bonus: <t:${Math.floor(rtTime / 1000)}:R>`;
     }
-
 
     await interaction.channel.send({
       content: `${rolePing} New crafting bonus is available: **${
