@@ -180,21 +180,21 @@ async function startBonusCycle(channel, manual = false) {
   const rolePing = getRolePing(Bonus.name);
   const endTimestamp = Math.floor((Date.now() + Bonus.time) / 1000);
 
-  const nextJT = findNextBonus("Jackpot Token Bonus", currentIndex);
-  const nextRT = findNextBonus("Reactor Token Bonus", currentIndex);
+  const nextJT = findNextBonus("Jackpot Token Bonus", selectedIndex);
+  const nextRT = findNextBonus("Reactor Token Bonus", selectedIndex);
 
-  const currentBonusEnd = Date.now() + Bonus.time;
+  const remaining = endDateIST.getTime() - Date.now();
 
   let extraInfo = "";
   if (nextJT) {
-    const jtTime = Date.now() + nextJT.timeMs;
+    const jtTime = Date.now() + remaining + nextJT.timeMs;
     extraInfo += `\nNext JT Bonus: <t:${Math.floor(jtTime / 1000)}:R>`;
   }
   if (nextRT) {
-    const rtTime = Date.now() + nextRT.timeMs;
+    const rtTime = Date.now() + remaining + nextRT.timeMs;
     extraInfo += `\nNext RT Bonus: <t:${Math.floor(rtTime / 1000)}:R>`;
   }
-
+  
   await channel.send({
     content: `${rolePing} New crafting bonus is available: **${
       Bonus.displayName ?? Bonus.name
