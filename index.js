@@ -303,7 +303,8 @@ client.on("interactionCreate", async (interaction) => {
     if (currentTimeout) clearTimeout(currentTimeout);
 
     currentIndex = (currentIndex + 1) % BonusCycle.length;
-
+    currentRemaining = BonusCycle[currentIndex].time;
+    currentSelectedIndex = currentIndex;
     await startBonusCycle(interaction.channel, true);
 
     await interaction.reply({
@@ -314,7 +315,8 @@ client.on("interactionCreate", async (interaction) => {
     if (currentTimeout) clearTimeout(currentTimeout);
 
     currentIndex = (currentIndex - 1 + BonusCycle.length) % BonusCycle.length;
-
+    currentRemaining = BonusCycle[currentIndex].time; // reset to full duration
+    currentSelectedIndex = currentIndex;
     await startBonusCycle(interaction.channel, true);
 
     await interaction.reply({
