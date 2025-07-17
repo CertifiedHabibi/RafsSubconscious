@@ -172,18 +172,20 @@ function findNextBonus(bonusName, startIndex) {
 
 let currentIndex = 0;
 let currentTimeout = null;
+let currentRemaining = null;
+let currentSelectedIndex = null;
 
 async function startBonusCycle(channel, manual = false) {
   const Bonus = BonusCycle[currentIndex];
   const imagePath = path.join(__dirname, "bonuses", Bonus.image);
   const attachment = new AttachmentBuilder(imagePath);
   const rolePing = getRolePing(Bonus.name);
-  const endTimestamp = Math.floor((Date.now() + Bonus.time) / 1000);
+  const endTimestamp = Math.floor((Date.now() + (currentRemaining ?? Bonus.time)) / 1000);
 
-  const nextJT = findNextBonus("Jackpot Token Bonus", selectedIndex);
-  const nextRT = findNextBonus("Reactor Token Bonus", selectedIndex);
+  const nextJT = findNextBonus("Jackpot Token Bonus", currentSelectedIndex ?? currentIndex);
+  const nextRT = findNextBonus("Reactor Token Bonus", currentSelectedIndex ?? currentIndex);
 
-  const remaining = endDateIST.getTime() - Date.now();
+  const remaining = currentRemaining ?? Bonus.time;
 
   let extraInfo = "";
   if (nextJT) {
@@ -196,17 +198,17 @@ async function startBonusCycle(channel, manual = false) {
   }
 
   await channel.send({
-    content: `${rolePing} New crafting bonus is available: **${
-      Bonus.displayName ?? Bonus.name
-    }**\nEnds: <t:${endTimestamp}:R>${extraInfo}`,
+    content: `${rolePing} New crafting bonus is available: **${Bonus.displayName ?? Bonus.name}**\nEnds: <t:${endTimestamp}:R>${extraInfo}`,
     files: [attachment],
   });
 
   if (!manual) {
     currentTimeout = setTimeout(() => {
       currentIndex = (currentIndex + 1) % BonusCycle.length;
+      currentRemaining = BonusCycle[currentIndex].time;
+      currentSelectedIndex = currentIndex;
       startBonusCycle(channel);
-    }, Bonus.time);
+    }, remaining);
   }
 }
 
@@ -256,6 +258,9 @@ client.on("interactionCreate", async (interaction) => {
     const nextRT = findNextBonus("Reactor Token Bonus", selectedIndex);
 
     const remaining = endDateIST.getTime() - Date.now();
+
+    currentRemaining = remaining;
+    currentSelectedIndex = selectedIndex;
 
     let extraInfo = "";
     if (nextJT) {
