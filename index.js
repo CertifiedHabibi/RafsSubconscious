@@ -277,7 +277,7 @@ client.on("interactionCreate", async (interaction) => {
 
     await interaction.editReply({ content: "Bonus message sent!" });
 
-    currentIndex = selectedIndex;
+    currentIndex = (selectedIndex + 1) % BonusCycle.length;
 
     const delay = endDateIST.getTime() - Date.now();
     if (currentTimeout) clearTimeout(currentTimeout);
