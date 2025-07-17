@@ -250,10 +250,12 @@ client.on("interactionCreate", async (interaction) => {
 
     await interaction.deferReply({ ephemeral: true });
 
-    const nextJT = findNextBonus("Jackpot Token Bonus", currentIndex);
-    const nextRT = findNextBonus("Reactor Token Bonus", currentIndex);
+    const selectedIndex = BonusCycle.findIndex(b => b.id === selectedBonus);
 
-    const currentBonusEnd = endDateIST.getTime(); // use the actual end time you calculated
+    const nextJT = findNextBonus("Jackpot Token Bonus", selectedIndex);
+    const nextRT = findNextBonus("Reactor Token Bonus", selectedIndex);
+
+    const currentBonusEnd = endDateIST.getTime();
 
     let extraInfo = "";
     if (nextJT) {
@@ -265,6 +267,7 @@ client.on("interactionCreate", async (interaction) => {
       extraInfo += `\nNext RT Bonus: <t:${Math.floor(rtTime / 1000)}:R>`;
     }
 
+
     await interaction.channel.send({
       content: `${rolePing} New crafting bonus is available: **${
         bonus.displayName ?? bonus.name
@@ -274,7 +277,6 @@ client.on("interactionCreate", async (interaction) => {
 
     await interaction.editReply({ content: "Bonus message sent!" });
 
-    const selectedIndex = BonusCycle.findIndex(b => b.id === selectedBonus);
     currentIndex = selectedIndex;
 
     const delay = endDateIST.getTime() - Date.now();
