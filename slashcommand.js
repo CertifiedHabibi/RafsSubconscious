@@ -20,12 +20,12 @@ const commands = [
   { name: 'Critical Strikes (15h)', value: '15CritStrike3' },
   { name: 'Campaign Passes x25 (36h)', value: '36X25Pass' },
   { name: 'Jackpot Token Bonus (19h)', value: '19JT' },
-  { name: 'Anti-Critical Shield (12h)', value: '12AntiCrit1' },
+  { name: 'Anti-Critical Shield 1 (12h)', value: '12AntiCrit1' },
   { name: 'Reactor Token Bonus (3h)', value: 'RT' },
   { name: 'Triple XP (18h)', value: '18TripleXP3' },
   { name: 'Double Regeneration (42h)', value: '42DoubleRegen7' },
   { name: 'Critical Strikes (15h)', value: '15CritStrike7' },
-  { name: 'Anti-Critical Shield (12h)', value: '12AntiCrit3' },
+  { name: 'Anti-Critical Shield 2 (12h)', value: '12AntiCrit3' },
   { name: 'Campaign Passes x25 (24h)', value: '24X25Pass' },
   { name: 'Jackpot Token Bonus (36h)', value: '36JT' }
 )
