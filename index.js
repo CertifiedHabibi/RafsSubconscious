@@ -6,14 +6,7 @@ app.listen(3000, () => console.log("Raf's Subconcious is online!"));
 
 require("dotenv").config();
 
-const {
-  Client,
-  IntentsBitField,
-  SlashCommandBuilder,
-  Routes,
-  AttachmentBuilder,
-} = require("discord.js");
-const { REST } = require("@discordjs/rest");
+const { Client, IntentsBitField, AttachmentBuilder } = require("discord.js");
 const path = require("path");
 
 const client = new Client({
@@ -21,8 +14,8 @@ const client = new Client({
 });
 
 function getRolePing(bonusName) {
-  if (bonusName === "Jackpot Token Bonus") return "<@&1312192164188655666>";
-  if (bonusName === "Reactor Token Bonus") return "<@&1312192811092807690>";
+  if (bonusName === "Jackpot Token Bonus") return "<@&1312192164188655666test>";
+  if (bonusName === "Reactor Token Bonus") return "<@&1312192811092807690test>";
   return "";
 }
 
@@ -34,6 +27,7 @@ const BonusCycle = [
     time: 36 * 60 * 60 * 1000,
     image: "DoubleRegen3.png",
   },
+
   {
     id: "24TripleXP7",
     name: "Triple XP",
@@ -41,6 +35,7 @@ const BonusCycle = [
     time: 24 * 60 * 60 * 1000,
     image: "TripleXP7.png",
   },
+
   {
     id: "12X25Pass",
     name: "Campaign Passes x25",
@@ -48,6 +43,7 @@ const BonusCycle = [
     time: 12 * 60 * 60 * 1000,
     image: "X25Pass.png",
   },
+
   {
     id: "24QuadRegen3",
     name: "Quadruple Regeneration",
@@ -55,6 +51,7 @@ const BonusCycle = [
     time: 24 * 60 * 60 * 1000,
     image: "QuadRegen3.png",
   },
+
   {
     id: "CT",
     name: "Challenge Token",
@@ -62,6 +59,7 @@ const BonusCycle = [
     time: 3 * 60 * 60 * 1000,
     image: "CT.png",
   },
+
   {
     id: "X5Pass",
     name: "Campaign Passes x5",
@@ -69,6 +67,7 @@ const BonusCycle = [
     time: (1 * 24 + 6) * 60 * 60 * 1000,
     image: "X5Pass.png",
   },
+
   {
     id: "10DoubleXP3",
     name: "Double XP",
@@ -76,6 +75,7 @@ const BonusCycle = [
     time: 10 * 60 * 60 * 1000,
     image: "DoubleXP3.png",
   },
+
   {
     id: "15CritStrike3",
     name: "Critical Strikes",
@@ -83,6 +83,7 @@ const BonusCycle = [
     time: 15 * 60 * 60 * 1000,
     image: "CritStrike3.png",
   },
+
   {
     id: "36X25Pass",
     name: "Campaign Passes x25",
@@ -90,6 +91,7 @@ const BonusCycle = [
     time: (1 * 24 + 12) * 60 * 60 * 1000,
     image: "X25Pass.png",
   },
+
   {
     id: "19JT",
     name: "Jackpot Token Bonus",
@@ -97,13 +99,15 @@ const BonusCycle = [
     time: 19 * 60 * 60 * 1000,
     image: "JT.png",
   },
+
   {
     id: "12AntiCrit1",
-    name: "Anti-Critical Shield",
+    name: "Anti-Critical Shield (1st Instance)",
     displayName: "Anti-Critical Shield",
     time: 12 * 60 * 60 * 1000,
     image: "AntiCrit1.png",
   },
+
   {
     id: "RT",
     name: "Reactor Token Bonus",
@@ -111,6 +115,7 @@ const BonusCycle = [
     time: 3 * 60 * 60 * 1000,
     image: "RT.png",
   },
+
   {
     id: "18TripleXP3",
     name: "Triple XP",
@@ -118,6 +123,7 @@ const BonusCycle = [
     time: 18 * 60 * 60 * 1000,
     image: "TripleXP3.png",
   },
+
   {
     id: "42DoubleRegen7",
     name: "Double Regeneration",
@@ -125,6 +131,7 @@ const BonusCycle = [
     time: (1 * 24 + 18) * 60 * 60 * 1000,
     image: "DoubleRegen7.png",
   },
+
   {
     id: "15CritStrike7",
     name: "Critical Strikes",
@@ -132,13 +139,15 @@ const BonusCycle = [
     time: 15 * 60 * 60 * 1000,
     image: "CritStrike7.png",
   },
+
   {
     id: "12AntiCrit3",
-    name: "Anti-Critical Shield",
+    name: "Anti-Critical Shield (2nd Instance)",
     displayName: "Anti-Critical Shield",
     time: 12 * 60 * 60 * 1000,
     image: "AntiCrit3.png",
   },
+
   {
     id: "24X25Pass",
     name: "Campaign Passes x25",
@@ -146,6 +155,7 @@ const BonusCycle = [
     time: 24 * 60 * 60 * 1000,
     image: "X25Pass.png",
   },
+
   {
     id: "36JT",
     name: "Jackpot Token Bonus",
@@ -155,61 +165,81 @@ const BonusCycle = [
   },
 ];
 
-function findNextBonus(bonusName, startIndex) {
+
+function findNextOffsetByName(targetName, startIndex) {
   let totalTime = 0;
-  let index = startIndex;
   for (let i = 1; i <= BonusCycle.length; i++) {
-    index = (startIndex + i) % BonusCycle.length;
-    totalTime +=
-      BonusCycle[(startIndex + i - 1 + BonusCycle.length) % BonusCycle.length]
-        .time;
-    if (BonusCycle[index].name === bonusName) {
-      return { timeMs: totalTime, index };
+    const idx = (startIndex + i) % BonusCycle.length;
+    totalTime += BonusCycle[(startIndex + i - 1 + BonusCycle.length) % BonusCycle.length].time;
+    if (BonusCycle[idx].name === targetName) return totalTime;
+  }
+  return null;
+}
+
+const SPECIAL_SET = new Set(["Jackpot Token Bonus", "Reactor Token Bonus", "Challenge Token"]);
+
+function findNextSpecialDelayMs(currentIndex, remainingMs) {
+  let accAfterCurrent = 0;
+  for (let i = 1; i <= BonusCycle.length; i++) {
+    const idx = (currentIndex + i) % BonusCycle.length;
+    if (SPECIAL_SET.has(BonusCycle[idx].name)) {
+      return { delayMs: remainingMs + accAfterCurrent, nextBonus: BonusCycle[idx] };
     }
+    accAfterCurrent += BonusCycle[idx].time;
   }
   return null;
 }
 
 let currentIndex = 0;
 let currentTimeout = null;
+let reminderTimeout = null;
 let currentRemaining = null;
 let currentSelectedIndex = null;
 
+function clearTimers() {
+  if (currentTimeout) clearTimeout(currentTimeout);
+  if (reminderTimeout) clearTimeout(reminderTimeout);
+  currentTimeout = null;
+  reminderTimeout = null;
+}
+
 async function startBonusCycle(channel, manual = false) {
   const Bonus = BonusCycle[currentIndex];
-  const imagePath = path.join(__dirname, "bonuses", Bonus.image);
-  const attachment = new AttachmentBuilder(imagePath);
-  const rolePing = getRolePing(Bonus.name);
-  const endTimestamp = Math.floor(
-    (Date.now() + (currentRemaining ?? Bonus.time)) / 1000
-  );
-
-  const nextJT = findNextBonus(
-    "Jackpot Token Bonus",
-    currentSelectedIndex ?? currentIndex
-  );
-  const nextRT = findNextBonus(
-    "Reactor Token Bonus",
-    currentSelectedIndex ?? currentIndex
-  );
-
   const remaining = currentRemaining ?? Bonus.time;
 
-  let extraInfo = "";
-  if (nextJT) {
-    const jtTime = Date.now() + (nextJT.timeMs - Bonus.time) + remaining;
-    extraInfo += `\nNext JT Bonus: <t:${Math.floor(jtTime / 1000)}:R>`;
+  clearTimers();
+
+  const nextSpecial = findNextSpecialDelayMs(currentIndex, remaining);
+  if (nextSpecial) {
+    const { delayMs, nextBonus } = nextSpecial;
+    const reminderDelay = delayMs - 30 * 60 * 1000;
+    if (reminderDelay > 0) {
+      reminderTimeout = setTimeout(() => {
+        channel.send({
+          content: `${getRolePing(nextBonus.name)} **${nextBonus.displayName}** bonus starts in 30 minutes!`,
+        });
+      }, reminderDelay);
+    }
   }
-  if (nextRT) {
-    const rtTime = Date.now() + (nextRT.timeMs - Bonus.time) + remaining;
-    extraInfo += `\nNext RT Bonus: <t:${Math.floor(rtTime / 1000)}:R>`;
+
+  const jtOffset = findNextOffsetByName("Jackpot Token Bonus", currentIndex);
+  const rtOffset = findNextOffsetByName("Reactor Token Bonus", currentIndex);
+  const ctOffset = findNextOffsetByName("Challenge Token", currentIndex);
+
+  let extraInfo = "";
+  if (jtOffset !== null) {
+    extraInfo += `\nNext JT Bonus: <t:${Math.floor((Date.now() + remaining + jtOffset - Bonus.time) / 1000)}:R>`;
+  }
+  if (rtOffset !== null) {
+    extraInfo += `\nNext RT Bonus: <t:${Math.floor((Date.now() + remaining + rtOffset - Bonus.time) / 1000)}:R>`;
+  }
+  if (ctOffset !== null) {
+    extraInfo += `\nNext CT Bonus: <t:${Math.floor((Date.now() + remaining + ctOffset - Bonus.time) / 1000)}:R>`;
   }
 
   await channel.send({
-    content: `${rolePing} New crafting bonus is available: **${
-      Bonus.displayName ?? Bonus.name
-    }**\nEnds: <t:${endTimestamp}:R>${extraInfo}`,
-    files: [attachment],
+    content: `${getRolePing(Bonus.name)} New crafting bonus is available: **${Bonus.displayName}**\nEnds: <t:${Math.floor((Date.now() + remaining) / 1000)}:R>${extraInfo}`,
+    files: [new AttachmentBuilder(path.join(__dirname, "bonuses", Bonus.image))],
   });
 
   if (!manual) {
@@ -224,105 +254,99 @@ async function startBonusCycle(channel, manual = false) {
 
 client.on("interactionCreate", async (interaction) => {
   if (!interaction.isChatInputCommand()) return;
+
   if (interaction.commandName === "startbonus") {
     const selectedBonus = interaction.options.getString("bonus");
-
     const bonus = BonusCycle.find((b) => b.id === selectedBonus);
-
-    if (!bonus) {
-      return interaction.reply({ content: "Invalid bonus!", ephemeral: true });
-    }
-
-    const imagePath = path.join(__dirname, "bonuses", bonus.image);
-    const attachment = new AttachmentBuilder(imagePath);
+    if (!bonus) return interaction.reply({ content: "Invalid bonus!", ephemeral: true });
 
     const endTimeString = interaction.options.getString("end_time");
     const endDateString = interaction.options.getString("end_date");
 
     const now = new Date();
     let endDateIST;
-
     if (endDateString) {
-      const [day, month, year] = endDateString.split("-").map(Number);
-      endDateIST = new Date(Date.UTC(year, month - 1, day));
+      const [d, m, y] = endDateString.split("-").map(Number);
+      endDateIST = new Date(Date.UTC(y, m - 1, d));
     } else {
       endDateIST = new Date(now);
     }
 
     const [hours, minutes] = endTimeString.split(":").map(Number);
     endDateIST.setUTCHours(hours - 5, minutes - 30, 0, 0);
-
     if (!endDateString && endDateIST < now) {
       endDateIST.setUTCDate(endDateIST.getUTCDate() + 1);
     }
 
-    const endTimestamp = Math.floor(endDateIST.getTime() / 1000);
-
-    const rolePing = getRolePing(bonus.name);
-
-    await interaction.deferReply({ ephemeral: true });
-
     const selectedIndex = BonusCycle.findIndex((b) => b.id === selectedBonus);
-
-    const nextJT = findNextBonus("Jackpot Token Bonus", selectedIndex);
-    const nextRT = findNextBonus("Reactor Token Bonus", selectedIndex);
-
-    const remaining = endDateIST.getTime() - Date.now();
-
-    currentRemaining = remaining;
+    currentIndex = selectedIndex;
     currentSelectedIndex = selectedIndex;
 
+    const remaining = endDateIST.getTime() - Date.now();
+    currentRemaining = remaining;
+
+    clearTimers();
+
+    const nextSpecial = findNextSpecialDelayMs(currentIndex, remaining);
+    if (nextSpecial) {
+      const { delayMs, nextBonus } = nextSpecial;
+      const reminderDelay = delayMs - 30 * 60 * 1000;
+      if (reminderDelay > 0) {
+        reminderTimeout = setTimeout(() => {
+          interaction.channel.send({
+            content: `${getRolePing(nextBonus.name)} **${nextBonus.displayName}** bonus starts in 30 minutes!`,
+          });
+        }, reminderDelay);
+      }
+    }
+
+    const jtOffset = findNextOffsetByName("Jackpot Token Bonus", selectedIndex);
+    const rtOffset = findNextOffsetByName("Reactor Token Bonus", selectedIndex);
+    const ctOffset = findNextOffsetByName("Challenge Token", selectedIndex);
+
     let extraInfo = "";
-    if (nextJT) {
-      const jtTime = Date.now() + (nextJT.timeMs - bonus.time) + remaining;
-      extraInfo += `\nNext JT Bonus: <t:${Math.floor(jtTime / 1000)}:R>`;
+    if (jtOffset !== null) {
+      extraInfo += `\nNext JT Bonus: <t:${Math.floor((Date.now() + remaining + jtOffset - bonus.time) / 1000)}:R>`;
     }
-    if (nextRT) {
-      const rtTime = Date.now() + (nextRT.timeMs - bonus.time) + remaining;
-      extraInfo += `\nNext RT Bonus: <t:${Math.floor(rtTime / 1000)}:R>`;
+    if (rtOffset !== null) {
+      extraInfo += `\nNext RT Bonus: <t:${Math.floor((Date.now() + remaining + rtOffset - bonus.time) / 1000)}:R>`;
+    }
+    if (ctOffset !== null) {
+      extraInfo += `\nNext CT Bonus: <t:${Math.floor((Date.now() + remaining + ctOffset - bonus.time) / 1000)}:R>`;
     }
 
+    await interaction.deferReply({ ephemeral: true });
     await interaction.channel.send({
-      content: `${rolePing} New crafting bonus is available: **${
-        bonus.displayName ?? bonus.name
-      }**\nEnds <t:${endTimestamp}:R>${extraInfo}`,
-      files: [attachment],
+      content: `${getRolePing(bonus.name)} New crafting bonus is available: **${bonus.displayName}**\nEnds <t:${Math.floor(endDateIST.getTime() / 1000)}:R>${extraInfo}`,
+      files: [new AttachmentBuilder(path.join(__dirname, "bonuses", bonus.image))],
     });
-
     await interaction.editReply({ content: "Bonus message sent!" });
 
-    currentIndex = selectedIndex;
-
     const delay = endDateIST.getTime() - Date.now();
-    if (currentTimeout) clearTimeout(currentTimeout);
-    currentTimeout = setTimeout(
-      () => startBonusCycle(interaction.channel),
-      delay
-    );
-  } else if (interaction.commandName === "nextbonus") {
-    if (currentTimeout) clearTimeout(currentTimeout);
+    currentTimeout = setTimeout(() => {
+      currentIndex = (currentIndex + 1) % BonusCycle.length;
+      currentRemaining = BonusCycle[currentIndex].time;
+      currentSelectedIndex = currentIndex;
+      startBonusCycle(interaction.channel);
+    }, delay);
+  }
 
+  else if (interaction.commandName === "nextbonus") {
+    clearTimers();
     currentIndex = (currentIndex + 1) % BonusCycle.length;
     currentRemaining = BonusCycle[currentIndex].time;
     currentSelectedIndex = currentIndex;
     await startBonusCycle(interaction.channel, true);
+    await interaction.reply({ content: "Next bonus triggered and cycle resumed.", ephemeral: true });
+  }
 
-    await interaction.reply({
-      content: "Next bonus triggered and cycle resumed.",
-      ephemeral: true,
-    });
-  } else if (interaction.commandName === "prevbonus") {
-    if (currentTimeout) clearTimeout(currentTimeout);
-
+  else if (interaction.commandName === "prevbonus") {
+    clearTimers();
     currentIndex = (currentIndex - 1 + BonusCycle.length) % BonusCycle.length;
     currentRemaining = BonusCycle[currentIndex].time;
     currentSelectedIndex = currentIndex;
     await startBonusCycle(interaction.channel, true);
-
-    await interaction.reply({
-      content: "Previous bonus triggered and cycle resumed.",
-      ephemeral: true,
-    });
+    await interaction.reply({ content: "Previous bonus triggered and cycle resumed.", ephemeral: true });
   }
 });
 
