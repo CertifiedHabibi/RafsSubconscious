@@ -453,6 +453,12 @@ client.on("interactionCreate", async (interaction) => {
 
 client.once("ready", async () => {
   console.log(`Logged in as ${client.user.tag}`);
+
+client.user.setPresence({
+  activities: [{ name: "my bio, you should see it too! :)", type: 3 }],
+  status: "online"
+});
+
 });
 
 client.login(process.env.DISCORD_CLIENT_TOKEN);
