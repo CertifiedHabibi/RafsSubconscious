@@ -216,7 +216,8 @@ async function startBonusCycle(channel, manual = false) {
     if (reminderDelay > 0) {
       reminderTimeout = setTimeout(() => {
         channel.send({
-          content: `${getRolePing(nextBonus.name)} **${nextBonus.displayName}** bonus starts in 30 minutes!`,
+          content: `${getRolePing(nextBonus.name)} **${nextBonus.displayName}** bonus starts in 30 minutes!:R>${extraInfo}`,
+          files: [new AttachmentBuilder(path.join(__dirname, "bonuses", Bonus.image))],
         });
       }, reminderDelay);
     }
