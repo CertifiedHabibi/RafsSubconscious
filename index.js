@@ -14,8 +14,8 @@ const client = new Client({
 });
 
 function getRolePing(bonusName) {
-  if (bonusName === "Jackpot Token Bonus") return "<@&1312192164188655666test>";
-  if (bonusName === "Reactor Token Bonus") return "<@&1312192811092807690test>";
+  if (bonusName === "Jackpot Token Bonus") return "<@&1312192164188655666>";
+  if (bonusName === "Reactor Token Bonus") return "<@&1312192811092807690>";
   return "";
 }
 
