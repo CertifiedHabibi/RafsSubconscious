@@ -165,25 +165,33 @@ const BonusCycle = [
   },
 ];
 
-
 function findNextOffsetByName(targetName, startIndex) {
   let totalTime = 0;
   for (let i = 1; i <= BonusCycle.length; i++) {
     const idx = (startIndex + i) % BonusCycle.length;
-    totalTime += BonusCycle[(startIndex + i - 1 + BonusCycle.length) % BonusCycle.length].time;
+    totalTime +=
+      BonusCycle[(startIndex + i - 1 + BonusCycle.length) % BonusCycle.length]
+        .time;
     if (BonusCycle[idx].name === targetName) return totalTime;
   }
   return null;
 }
 
-const SPECIAL_SET = new Set(["Jackpot Token Bonus", "Reactor Token Bonus", "Challenge Token"]);
+const SPECIAL_SET = new Set([
+  "Jackpot Token Bonus",
+  "Reactor Token Bonus",
+  "Challenge Token",
+]);
 
 function findNextSpecialDelayMs(currentIndex, remainingMs) {
   let accAfterCurrent = 0;
   for (let i = 1; i <= BonusCycle.length; i++) {
     const idx = (currentIndex + i) % BonusCycle.length;
     if (SPECIAL_SET.has(BonusCycle[idx].name)) {
-      return { delayMs: remainingMs + accAfterCurrent, nextBonus: BonusCycle[idx] };
+      return {
+        delayMs: remainingMs + accAfterCurrent,
+        nextBonus: BonusCycle[idx],
+      };
     }
     accAfterCurrent += BonusCycle[idx].time;
   }
@@ -215,9 +223,39 @@ async function startBonusCycle(channel, manual = false) {
     const reminderDelay = delayMs - 30 * 60 * 1000;
     if (reminderDelay > 0) {
       reminderTimeout = setTimeout(() => {
+        const nextIndex = BonusCycle.findIndex((b) => b.id === nextBonus.id);
+        const thirty = 30 * 60 * 1000;
+
+        const jtOff = findNextOffsetByName("Jackpot Token Bonus", nextIndex);
+        const rtOff = findNextOffsetByName("Reactor Token Bonus", nextIndex);
+        const ctOff = findNextOffsetByName("Challenge Token", nextIndex);
+
+        const nowTs = Date.now();
+        const lines = [];
+        const line = (label, off) => {
+          if (off !== null) {
+            const ms = thirty + (off - nextBonus.time);
+            lines.push(
+              `Next ${label}: <t:${Math.floor((nowTs + ms) / 1000)}:R>`
+            );
+          }
+        };
+
+        line("JT Bonus", jtOff);
+        line("RT Bonus", rtOff);
+        line("CT Bonus", ctOff);
+
+        const reminderExtra = lines.length ? `\n${lines.join("\n")}` : "";
+
         channel.send({
-          content: `${getRolePing(nextBonus.name)} **${nextBonus.displayName}** bonus starts in 30 minutes!:R>${extraInfo}`,
-          files: [new AttachmentBuilder(path.join(__dirname, "bonuses", Bonus.image))],
+          content: `${getRolePing(nextBonus.name)} **${
+            nextBonus.displayName
+          }** bonus starts in 30 minutes!${reminderExtra}`,
+          files: [
+            new AttachmentBuilder(
+              path.join(__dirname, "bonuses", nextBonus.image)
+            ),
+          ],
         });
       }, reminderDelay);
     }
@@ -229,18 +267,32 @@ async function startBonusCycle(channel, manual = false) {
 
   let extraInfo = "";
   if (jtOffset !== null) {
-    extraInfo += `\nNext JT Bonus: <t:${Math.floor((Date.now() + remaining + jtOffset - Bonus.time) / 1000)}:R>`;
+    extraInfo += `\nNext JT Bonus: <t:${Math.floor(
+      (Date.now() + remaining + jtOffset - Bonus.time) / 1000
+    )}:R>`;
   }
   if (rtOffset !== null) {
-    extraInfo += `\nNext RT Bonus: <t:${Math.floor((Date.now() + remaining + rtOffset - Bonus.time) / 1000)}:R>`;
+    extraInfo += `\nNext RT Bonus: <t:${Math.floor(
+      (Date.now() + remaining + rtOffset - Bonus.time) / 1000
+    )}:R>`;
   }
   if (ctOffset !== null) {
-    extraInfo += `\nNext CT Bonus: <t:${Math.floor((Date.now() + remaining + ctOffset - Bonus.time) / 1000)}:R>`;
+    extraInfo += `\nNext CT Bonus: <t:${Math.floor(
+      (Date.now() + remaining + ctOffset - Bonus.time) / 1000
+    )}:R>`;
   }
 
   await channel.send({
-    content: `${getRolePing(Bonus.name)} New crafting bonus is available: **${Bonus.displayName}**\nEnds: <t:${Math.floor((Date.now() + remaining) / 1000)}:R>${extraInfo}`,
-    files: [new AttachmentBuilder(path.join(__dirname, "bonuses", Bonus.image))],
+    content: `If you wish to see the entire bonus cycle, please check the pinned message in this channel.\n${getRolePing(
+      Bonus.name
+    )} New crafting bonus is available: **${
+      Bonus.displayName
+    }**\nEnds: <t:${Math.floor(
+      (Date.now() + remaining) / 1000
+    )}:R>${extraInfo}`,
+    files: [
+      new AttachmentBuilder(path.join(__dirname, "bonuses", Bonus.image)),
+    ],
   });
 
   if (!manual) {
@@ -259,7 +311,8 @@ client.on("interactionCreate", async (interaction) => {
   if (interaction.commandName === "startbonus") {
     const selectedBonus = interaction.options.getString("bonus");
     const bonus = BonusCycle.find((b) => b.id === selectedBonus);
-    if (!bonus) return interaction.reply({ content: "Invalid bonus!", ephemeral: true });
+    if (!bonus)
+      return interaction.reply({ content: "Invalid bonus!", ephemeral: true });
 
     const endTimeString = interaction.options.getString("end_time");
     const endDateString = interaction.options.getString("end_date");
@@ -294,8 +347,39 @@ client.on("interactionCreate", async (interaction) => {
       const reminderDelay = delayMs - 30 * 60 * 1000;
       if (reminderDelay > 0) {
         reminderTimeout = setTimeout(() => {
-          interaction.channel.send({
-            content: `${getRolePing(nextBonus.name)} **${nextBonus.displayName}** bonus starts in 30 minutes!`,
+          const nextIndex = BonusCycle.findIndex((b) => b.id === nextBonus.id);
+          const thirty = 30 * 60 * 1000;
+
+          const jtOff = findNextOffsetByName("Jackpot Token Bonus", nextIndex);
+          const rtOff = findNextOffsetByName("Reactor Token Bonus", nextIndex);
+          const ctOff = findNextOffsetByName("Challenge Token", nextIndex);
+
+          const nowTs = Date.now();
+          const lines = [];
+          const line = (label, off) => {
+            if (off !== null) {
+              const ms = thirty + (off - nextBonus.time);
+              lines.push(
+                `Next ${label}: <t:${Math.floor((nowTs + ms) / 1000)}:R>`
+              );
+            }
+          };
+
+          line("JT Bonus", jtOff);
+          line("RT Bonus", rtOff);
+          line("CT Bonus", ctOff);
+
+          const reminderExtra = lines.length ? `\n${lines.join("\n")}` : "";
+
+          channel.send({
+            content: `${getRolePing(nextBonus.name)} **${
+              nextBonus.displayName
+            }** bonus starts in 30 minutes!${reminderExtra}`,
+            files: [
+              new AttachmentBuilder(
+                path.join(__dirname, "bonuses", nextBonus.image)
+              ),
+            ],
           });
         }, reminderDelay);
       }
@@ -307,19 +391,31 @@ client.on("interactionCreate", async (interaction) => {
 
     let extraInfo = "";
     if (jtOffset !== null) {
-      extraInfo += `\nNext JT Bonus: <t:${Math.floor((Date.now() + remaining + jtOffset - bonus.time) / 1000)}:R>`;
+      extraInfo += `\nNext JT Bonus: <t:${Math.floor(
+        (Date.now() + remaining + jtOffset - bonus.time) / 1000
+      )}:R>`;
     }
     if (rtOffset !== null) {
-      extraInfo += `\nNext RT Bonus: <t:${Math.floor((Date.now() + remaining + rtOffset - bonus.time) / 1000)}:R>`;
+      extraInfo += `\nNext RT Bonus: <t:${Math.floor(
+        (Date.now() + remaining + rtOffset - bonus.time) / 1000
+      )}:R>`;
     }
     if (ctOffset !== null) {
-      extraInfo += `\nNext CT Bonus: <t:${Math.floor((Date.now() + remaining + ctOffset - bonus.time) / 1000)}:R>`;
+      extraInfo += `\nNext CT Bonus: <t:${Math.floor(
+        (Date.now() + remaining + ctOffset - bonus.time) / 1000
+      )}:R>`;
     }
 
     await interaction.deferReply({ ephemeral: true });
     await interaction.channel.send({
-      content: `${getRolePing(bonus.name)} New crafting bonus is available: **${bonus.displayName}**\nEnds <t:${Math.floor(endDateIST.getTime() / 1000)}:R>${extraInfo}`,
-      files: [new AttachmentBuilder(path.join(__dirname, "bonuses", bonus.image))],
+      content: `If you wish to see the entire bonus cycle, please check the pinned message in this channel.\n${getRolePing(
+        bonus.name
+      )} New crafting bonus is available: **${
+        bonus.displayName
+      }**\nEnds <t:${Math.floor(endDateIST.getTime() / 1000)}:R>${extraInfo}`,
+      files: [
+        new AttachmentBuilder(path.join(__dirname, "bonuses", bonus.image)),
+      ],
     });
     await interaction.editReply({ content: "Bonus message sent!" });
 
@@ -330,24 +426,26 @@ client.on("interactionCreate", async (interaction) => {
       currentSelectedIndex = currentIndex;
       startBonusCycle(interaction.channel);
     }, delay);
-  }
-
-  else if (interaction.commandName === "nextbonus") {
+  } else if (interaction.commandName === "nextbonus") {
     clearTimers();
     currentIndex = (currentIndex + 1) % BonusCycle.length;
     currentRemaining = BonusCycle[currentIndex].time;
     currentSelectedIndex = currentIndex;
     await startBonusCycle(interaction.channel, true);
-    await interaction.reply({ content: "Next bonus triggered and cycle resumed.", ephemeral: true });
-  }
-
-  else if (interaction.commandName === "prevbonus") {
+    await interaction.reply({
+      content: "Next bonus triggered and cycle resumed.",
+      ephemeral: true,
+    });
+  } else if (interaction.commandName === "prevbonus") {
     clearTimers();
     currentIndex = (currentIndex - 1 + BonusCycle.length) % BonusCycle.length;
     currentRemaining = BonusCycle[currentIndex].time;
     currentSelectedIndex = currentIndex;
     await startBonusCycle(interaction.channel, true);
-    await interaction.reply({ content: "Previous bonus triggered and cycle resumed.", ephemeral: true });
+    await interaction.reply({
+      content: "Previous bonus triggered and cycle resumed.",
+      ephemeral: true,
+    });
   }
 });
 
