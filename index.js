@@ -220,8 +220,7 @@ async function startBonusCycle(channel, manual = false) {
   const nextSpecial = findNextSpecialDelayMs(currentIndex, remaining);
   if (nextSpecial) {
     const { delayMs, nextBonus } = nextSpecial;
-    const reminderDelay = delayMs - 30 * 60 * 1000;
-    if (reminderDelay > 0) {
+    const reminderDelay = Math.max(0, delayMs - 30 * 60 * 1000);
       reminderTimeout = setTimeout(() => {
         const nextIndex = BonusCycle.findIndex((b) => b.id === nextBonus.id);
         const thirty = 30 * 60 * 1000;
@@ -258,7 +257,6 @@ async function startBonusCycle(channel, manual = false) {
           ],
         });
       }, reminderDelay);
-    }
   }
 
   const jtOffset = findNextOffsetByName("Jackpot Token Bonus", currentIndex);
@@ -283,9 +281,9 @@ async function startBonusCycle(channel, manual = false) {
   }
 
   await channel.send({
-    content: `If you wish to see the entire bonus cycle, please check the pinned message in this channel.\n${getRolePing(
+    content: `If you wish to see the entire bonus cycle, please check the pinned message in this channel.\n\n${getRolePing(
       Bonus.name
-    )} New crafting bonus is available: **${
+    )}New crafting bonus is available: **${
       Bonus.displayName
     }**\nEnds: <t:${Math.floor(
       (Date.now() + remaining) / 1000
@@ -344,8 +342,7 @@ client.on("interactionCreate", async (interaction) => {
     const nextSpecial = findNextSpecialDelayMs(currentIndex, remaining);
     if (nextSpecial) {
       const { delayMs, nextBonus } = nextSpecial;
-      const reminderDelay = delayMs - 30 * 60 * 1000;
-      if (reminderDelay > 0) {
+      const reminderDelay = Math.max(0, delayMs - 30 * 60 * 1000);
         reminderTimeout = setTimeout(() => {
           const nextIndex = BonusCycle.findIndex((b) => b.id === nextBonus.id);
           const thirty = 30 * 60 * 1000;
@@ -371,7 +368,7 @@ client.on("interactionCreate", async (interaction) => {
 
           const reminderExtra = lines.length ? `\n${lines.join("\n")}` : "";
 
-          channel.send({
+          interaction.channel.send({
             content: `${getRolePing(nextBonus.name)} **${
               nextBonus.displayName
             }** bonus starts in 30 minutes!${reminderExtra}`,
@@ -382,7 +379,6 @@ client.on("interactionCreate", async (interaction) => {
             ],
           });
         }, reminderDelay);
-      }
     }
 
     const jtOffset = findNextOffsetByName("Jackpot Token Bonus", selectedIndex);
