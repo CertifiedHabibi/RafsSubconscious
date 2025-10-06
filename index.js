@@ -454,11 +454,19 @@ client.on("interactionCreate", async (interaction) => {
 client.once("ready", async () => {
   console.log(`Logged in as ${client.user.tag}`);
 
-client.user.setPresence({
-  activities: [{ name: "my bio, you should see it too! :)", type: 3 }],
-  status: "online"
-});
+  const applyPresence = async () => {
+    await client.user.setPresence({
+      activities: [{ name: "my bio! You should see it too! :)", type: 3 }],
+      status: "online",
+    });
+  };
 
+  await applyPresence();
+
+  setInterval(applyPresence, 3600000);
+
+  client.on("shardResume", applyPresence);
+  client.on("shardReady", applyPresence);
 });
 
 client.login(process.env.DISCORD_CLIENT_TOKEN);
