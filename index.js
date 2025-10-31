@@ -203,16 +203,15 @@ async function startBonusCycle(channel, manual = false) {
 
   clearTimers();
 
-  // --- Schedule next special bonus reminders ---
   const nextSpecial = findNextSpecialDelayMs(currentIndex, remaining);
   if (nextSpecial) {
     const { delayMs, nextBonus } = nextSpecial;
     const thirty = 30 * 60 * 1000;
 
-    // 30-min reminder
     const reminderDelay = Math.max(0, delayMs - thirty);
     reminderTimeout = setTimeout(() => {
       const nextIndex = BonusCycle.findIndex((b) => b.id === nextBonus.id);
+
       const jtOff = findNextOffsetByName("Jackpot Token Bonus", nextIndex);
       const rtOff = findNextOffsetByName("Reactor Token Bonus", nextIndex);
       const ctOff = findNextOffsetByName("Challenge Token", nextIndex);
@@ -247,16 +246,16 @@ async function startBonusCycle(channel, manual = false) {
       });
     }, reminderDelay);
 
-    // RT-only 1-day prior reminder
     if (nextBonus.name === "Reactor Token Bonus") {
       const oneDay = 24 * 60 * 60 * 1000;
       const oneDayDelay = delayMs - oneDay;
       if (oneDayDelay > 0) {
         rtOneDayTimeout = setTimeout(() => {
+          const nextStart = Math.floor((Date.now() + delayMs) / 1000);
           channel.send({
             content: `${getRolePing(
               "Reactor Token Bonus"
-            )} **Reactor Token** bonus starts in 1 day!`,
+            )} **Reactor Token** bonus starts in 1 day!\nStarts: <t:${nextStart}:R>`,
             files: [
               new AttachmentBuilder(
                 path.join(__dirname, "bonuses", nextBonus.image)
@@ -269,7 +268,6 @@ async function startBonusCycle(channel, manual = false) {
     }
   }
 
-  // --- Send the main "bonus active" message ---
   const jtOffset = findNextOffsetByName("Jackpot Token Bonus", currentIndex);
   const rtOffset = findNextOffsetByName("Reactor Token Bonus", currentIndex);
   const ctOffset = findNextOffsetByName("Challenge Token", currentIndex);
@@ -293,12 +291,11 @@ async function startBonusCycle(channel, manual = false) {
       Bonus.name
     )}New crafting bonus is available: **${
       Bonus.displayName
-    }**\nEnds: <t:${Math.floor(
-      (Date.now() + remaining) / 1000
-    )}:R>${extraInfo}`,
+    }**\nEnds <t:${Math.floor((Date.now() + remaining) / 1000)}:R>${extraInfo}`,
     files: [
       new AttachmentBuilder(path.join(__dirname, "bonuses", Bonus.image)),
     ],
+    allowedMentions: { parse: ["roles"] },
   });
 
   if (!manual) {
@@ -347,16 +344,35 @@ client.on("interactionCreate", async (interaction) => {
 
     clearTimers();
 
+    const jtOffset = findNextOffsetByName("Jackpot Token Bonus", selectedIndex);
+    const rtOffset = findNextOffsetByName("Reactor Token Bonus", selectedIndex);
+    const ctOffset = findNextOffsetByName("Challenge Token", selectedIndex);
+
+    let extraInfo = "";
+    if (jtOffset !== null)
+      extraInfo += `\nNext JT Bonus: <t:${Math.floor(
+        (Date.now() + remaining + jtOffset - bonus.time) / 1000
+      )}:R>`;
+    if (rtOffset !== null)
+      extraInfo += `\nNext RT Bonus: <t:${Math.floor(
+        (Date.now() + remaining + rtOffset - bonus.time) / 1000
+      )}:R>`;
+    if (ctOffset !== null)
+      extraInfo += `\nNext CT Bonus: <t:${Math.floor(
+        (Date.now() + remaining + ctOffset - bonus.time) / 1000
+      )}:R>`;
+
     await interaction.deferReply({ ephemeral: true });
     await interaction.channel.send({
       content: `If you wish to see the entire bonus cycle, please check the pinned message in this channel.\n\n${getRolePing(
         bonus.name
       )}New crafting bonus is available: **${
         bonus.displayName
-      }**\nEnds <t:${Math.floor(endDateIST.getTime() / 1000)}:R>`,
+      }**\nEnds <t:${Math.floor(endDateIST.getTime() / 1000)}:R>${extraInfo}`,
       files: [
         new AttachmentBuilder(path.join(__dirname, "bonuses", bonus.image)),
       ],
+      allowedMentions: { parse: ["roles"] },
     });
     await interaction.editReply({ content: "Bonus message sent!" });
 
@@ -371,7 +387,6 @@ client.on("interactionCreate", async (interaction) => {
     clearTimers();
     currentIndex = (currentIndex + 1) % BonusCycle.length;
     currentRemaining = BonusCycle[currentIndex].time;
-    currentSelectedIndex = currentIndex;
     await startBonusCycle(interaction.channel, true);
     await interaction.reply({
       content: "Next bonus triggered and cycle resumed.",
@@ -381,7 +396,6 @@ client.on("interactionCreate", async (interaction) => {
     clearTimers();
     currentIndex = (currentIndex - 1 + BonusCycle.length) % BonusCycle.length;
     currentRemaining = BonusCycle[currentIndex].time;
-    currentSelectedIndex = currentIndex;
     await startBonusCycle(interaction.channel, true);
     await interaction.reply({
       content: "Previous bonus triggered and cycle resumed.",
