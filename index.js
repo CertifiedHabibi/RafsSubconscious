@@ -27,7 +27,6 @@ const BonusCycle = [
     time: 36 * 60 * 60 * 1000,
     image: "DoubleRegen3.png",
   },
-
   {
     id: "24TripleXP7",
     name: "Triple XP",
@@ -35,7 +34,6 @@ const BonusCycle = [
     time: 24 * 60 * 60 * 1000,
     image: "TripleXP7.png",
   },
-
   {
     id: "12X25Pass",
     name: "Campaign Passes x25",
@@ -43,7 +41,6 @@ const BonusCycle = [
     time: 12 * 60 * 60 * 1000,
     image: "X25Pass.png",
   },
-
   {
     id: "24QuadRegen3",
     name: "Quadruple Regeneration",
@@ -51,7 +48,6 @@ const BonusCycle = [
     time: 24 * 60 * 60 * 1000,
     image: "QuadRegen3.png",
   },
-
   {
     id: "CT",
     name: "Challenge Token",
@@ -59,7 +55,6 @@ const BonusCycle = [
     time: 3 * 60 * 60 * 1000,
     image: "CT.png",
   },
-
   {
     id: "X5Pass",
     name: "Campaign Passes x5",
@@ -67,7 +62,6 @@ const BonusCycle = [
     time: (1 * 24 + 6) * 60 * 60 * 1000,
     image: "X5Pass.png",
   },
-
   {
     id: "10DoubleXP3",
     name: "Double XP",
@@ -75,7 +69,6 @@ const BonusCycle = [
     time: 10 * 60 * 60 * 1000,
     image: "DoubleXP3.png",
   },
-
   {
     id: "15CritStrike3",
     name: "Critical Strikes",
@@ -83,7 +76,6 @@ const BonusCycle = [
     time: 15 * 60 * 60 * 1000,
     image: "CritStrike3.png",
   },
-
   {
     id: "36X25Pass",
     name: "Campaign Passes x25",
@@ -91,7 +83,6 @@ const BonusCycle = [
     time: (1 * 24 + 12) * 60 * 60 * 1000,
     image: "X25Pass.png",
   },
-
   {
     id: "19JT",
     name: "Jackpot Token Bonus",
@@ -99,7 +90,6 @@ const BonusCycle = [
     time: 19 * 60 * 60 * 1000,
     image: "JT.png",
   },
-
   {
     id: "12AntiCrit1",
     name: "Anti-Critical Shield (1st Instance)",
@@ -107,7 +97,6 @@ const BonusCycle = [
     time: 12 * 60 * 60 * 1000,
     image: "AntiCrit1.png",
   },
-
   {
     id: "RT",
     name: "Reactor Token Bonus",
@@ -115,7 +104,6 @@ const BonusCycle = [
     time: 3 * 60 * 60 * 1000,
     image: "RT.png",
   },
-
   {
     id: "18TripleXP3",
     name: "Triple XP",
@@ -123,7 +111,6 @@ const BonusCycle = [
     time: 18 * 60 * 60 * 1000,
     image: "TripleXP3.png",
   },
-
   {
     id: "42DoubleRegen7",
     name: "Double Regeneration",
@@ -131,7 +118,6 @@ const BonusCycle = [
     time: (1 * 24 + 18) * 60 * 60 * 1000,
     image: "DoubleRegen7.png",
   },
-
   {
     id: "15CritStrike7",
     name: "Critical Strikes",
@@ -139,7 +125,6 @@ const BonusCycle = [
     time: 15 * 60 * 60 * 1000,
     image: "CritStrike7.png",
   },
-
   {
     id: "12AntiCrit3",
     name: "Anti-Critical Shield (2nd Instance)",
@@ -147,7 +132,6 @@ const BonusCycle = [
     time: 12 * 60 * 60 * 1000,
     image: "AntiCrit3.png",
   },
-
   {
     id: "24X25Pass",
     name: "Campaign Passes x25",
@@ -155,7 +139,6 @@ const BonusCycle = [
     time: 24 * 60 * 60 * 1000,
     image: "X25Pass.png",
   },
-
   {
     id: "36JT",
     name: "Jackpot Token Bonus",
@@ -201,14 +184,17 @@ function findNextSpecialDelayMs(currentIndex, remainingMs) {
 let currentIndex = 0;
 let currentTimeout = null;
 let reminderTimeout = null;
+let rtOneDayTimeout = null;
 let currentRemaining = null;
 let currentSelectedIndex = null;
 
 function clearTimers() {
   if (currentTimeout) clearTimeout(currentTimeout);
   if (reminderTimeout) clearTimeout(reminderTimeout);
+  if (rtOneDayTimeout) clearTimeout(rtOneDayTimeout);
   currentTimeout = null;
   reminderTimeout = null;
+  rtOneDayTimeout = null;
 }
 
 async function startBonusCycle(channel, manual = false) {
@@ -217,15 +203,16 @@ async function startBonusCycle(channel, manual = false) {
 
   clearTimers();
 
+  // --- Schedule next special bonus reminders ---
   const nextSpecial = findNextSpecialDelayMs(currentIndex, remaining);
   if (nextSpecial) {
     const { delayMs, nextBonus } = nextSpecial;
-    const reminderDelay = Math.max(0, delayMs - 30 * 60 * 1000);
+    const thirty = 30 * 60 * 1000;
 
+    // 30-min reminder
+    const reminderDelay = Math.max(0, delayMs - thirty);
     reminderTimeout = setTimeout(() => {
       const nextIndex = BonusCycle.findIndex((b) => b.id === nextBonus.id);
-      const thirty = 30 * 60 * 1000;
-
       const jtOff = findNextOffsetByName("Jackpot Token Bonus", nextIndex);
       const rtOff = findNextOffsetByName("Reactor Token Bonus", nextIndex);
       const ctOff = findNextOffsetByName("Challenge Token", nextIndex);
@@ -234,7 +221,6 @@ async function startBonusCycle(channel, manual = false) {
       const lines = [];
       const pushLine = (label, targetName, off) => {
         if (off === null) return;
-
         const ms =
           targetName === nextBonus.name
             ? thirty
@@ -260,28 +246,47 @@ async function startBonusCycle(channel, manual = false) {
         allowedMentions: { parse: ["roles"] },
       });
     }, reminderDelay);
+
+    // RT-only 1-day prior reminder
+    if (nextBonus.name === "Reactor Token Bonus") {
+      const oneDay = 24 * 60 * 60 * 1000;
+      const oneDayDelay = delayMs - oneDay;
+      if (oneDayDelay > 0) {
+        rtOneDayTimeout = setTimeout(() => {
+          channel.send({
+            content: `${getRolePing(
+              "Reactor Token Bonus"
+            )} **Reactor Token** bonus starts in 1 day!`,
+            files: [
+              new AttachmentBuilder(
+                path.join(__dirname, "bonuses", nextBonus.image)
+              ),
+            ],
+            allowedMentions: { parse: ["roles"] },
+          });
+        }, oneDayDelay);
+      }
+    }
   }
 
+  // --- Send the main "bonus active" message ---
   const jtOffset = findNextOffsetByName("Jackpot Token Bonus", currentIndex);
   const rtOffset = findNextOffsetByName("Reactor Token Bonus", currentIndex);
   const ctOffset = findNextOffsetByName("Challenge Token", currentIndex);
 
   let extraInfo = "";
-  if (jtOffset !== null) {
+  if (jtOffset !== null)
     extraInfo += `\nNext JT Bonus: <t:${Math.floor(
       (Date.now() + remaining + jtOffset - Bonus.time) / 1000
     )}:R>`;
-  }
-  if (rtOffset !== null) {
+  if (rtOffset !== null)
     extraInfo += `\nNext RT Bonus: <t:${Math.floor(
       (Date.now() + remaining + rtOffset - Bonus.time) / 1000
     )}:R>`;
-  }
-  if (ctOffset !== null) {
+  if (ctOffset !== null)
     extraInfo += `\nNext CT Bonus: <t:${Math.floor(
       (Date.now() + remaining + ctOffset - Bonus.time) / 1000
     )}:R>`;
-  }
 
   await channel.send({
     content: `If you wish to see the entire bonus cycle, please check the pinned message in this channel.\n\n${getRolePing(
@@ -342,79 +347,13 @@ client.on("interactionCreate", async (interaction) => {
 
     clearTimers();
 
-    const nextSpecial = findNextSpecialDelayMs(currentIndex, remaining);
-    if (nextSpecial) {
-      const { delayMs, nextBonus } = nextSpecial;
-      const reminderDelay = Math.max(0, delayMs - 30 * 60 * 1000);
-
-      reminderTimeout = setTimeout(() => {
-        const nextIndex = BonusCycle.findIndex((b) => b.id === nextBonus.id);
-        const thirty = 30 * 60 * 1000;
-
-        const jtOff = findNextOffsetByName("Jackpot Token Bonus", nextIndex);
-        const rtOff = findNextOffsetByName("Reactor Token Bonus", nextIndex);
-        const ctOff = findNextOffsetByName("Challenge Token", nextIndex);
-
-        const nowTs = Date.now();
-        const lines = [];
-        const pushLine = (label, targetName, off) => {
-          if (off === null) return;
-
-          const ms =
-            targetName === nextBonus.name
-              ? thirty
-              : thirty + (off - nextBonus.time);
-          lines.push(`Next ${label}: <t:${Math.floor((nowTs + ms) / 1000)}:R>`);
-        };
-
-        pushLine("JT Bonus", "Jackpot Token Bonus", jtOff);
-        pushLine("RT Bonus", "Reactor Token Bonus", rtOff);
-        pushLine("CT Bonus", "Challenge Token", ctOff);
-
-        const reminderExtra = lines.length ? `\n${lines.join("\n")}` : "";
-
-        interaction.channel.send({
-          content: `${getRolePing(nextBonus.name)} **${
-            nextBonus.displayName
-          }** bonus starts in 30 minutes!${reminderExtra}`,
-          files: [
-            new AttachmentBuilder(
-              path.join(__dirname, "bonuses", nextBonus.image)
-            ),
-          ],
-          allowedMentions: { parse: ["roles"] },
-        });
-      }, reminderDelay);
-    }
-
-    const jtOffset = findNextOffsetByName("Jackpot Token Bonus", selectedIndex);
-    const rtOffset = findNextOffsetByName("Reactor Token Bonus", selectedIndex);
-    const ctOffset = findNextOffsetByName("Challenge Token", selectedIndex);
-
-    let extraInfo = "";
-    if (jtOffset !== null) {
-      extraInfo += `\nNext JT Bonus: <t:${Math.floor(
-        (Date.now() + remaining + jtOffset - bonus.time) / 1000
-      )}:R>`;
-    }
-    if (rtOffset !== null) {
-      extraInfo += `\nNext RT Bonus: <t:${Math.floor(
-        (Date.now() + remaining + rtOffset - bonus.time) / 1000
-      )}:R>`;
-    }
-    if (ctOffset !== null) {
-      extraInfo += `\nNext CT Bonus: <t:${Math.floor(
-        (Date.now() + remaining + ctOffset - bonus.time) / 1000
-      )}:R>`;
-    }
-
     await interaction.deferReply({ ephemeral: true });
     await interaction.channel.send({
       content: `If you wish to see the entire bonus cycle, please check the pinned message in this channel.\n\n${getRolePing(
         bonus.name
       )}New crafting bonus is available: **${
         bonus.displayName
-      }**\nEnds <t:${Math.floor(endDateIST.getTime() / 1000)}:R>${extraInfo}`,
+      }**\nEnds <t:${Math.floor(endDateIST.getTime() / 1000)}:R>`,
       files: [
         new AttachmentBuilder(path.join(__dirname, "bonuses", bonus.image)),
       ],
@@ -462,7 +401,6 @@ client.once("ready", async () => {
   };
 
   await applyPresence();
-
   setInterval(applyPresence, 3600000);
 
   client.on("shardResume", applyPresence);
